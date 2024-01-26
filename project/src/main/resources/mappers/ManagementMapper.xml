@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+
+<mapper namespace="com.care.boot.managementBoard.IManagementBoardMapper">
+
+	<insert id="managementWriteProc">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no),0)+1 FROM management
+		</selectKey>
+		INSERT INTO management 
+		VALUES(#{no}, #{title}, #{id}, #{time}, #{content}, #{image})
+	</insert>
+    
+    <select id="totalCount">
+    	<choose>
+    		<when test="select == 'select'">
+    			select count(id) from management where title like '%'||#{search}||'%'  		
+    		</when>
+    		<otherwise>
+    			select count(id) from management
+    		</otherwise>
+    	</choose>
+    </select>
+    
+    <select id="managementBoardContent" resultType="com.care.boot.managementBoard.ManagementBoardDTO">
+    	select * from management where no=#{no}	
+    </select>
+    
+    <select id="managementForm" resultType="com.care.boot.managementBoard.ManagementBoardDTO">
+    	<choose>
+    		<when test="select == 'select'">
+    			SELECT B.* FROM (
+				SELECT ROWNUM as r, A.* FROM (
+				SELECT management.* FROM management where title like '%'||#{search}||'%' ORDER BY no DESC)A 
+				)B WHERE B.r BETWEEN #{begin} AND #{end}
+
+    		</when> 
+    		<otherwise>
+    			SELECT B.* FROM (
+				SELECT ROWNUM as r, A.* FROM (
+				SELECT management.* FROM management ORDER BY no DESC)A 
+				)B WHERE B.r BETWEEN #{begin} AND #{end}
+    		</otherwise>
+    	
+    	</choose>
+    </select>
+    
+    <delete id="managementBoardDeleteProc">
+    	delete from management where no=#{no}
+    </delete>
+    
+    <update id="managementBoardModify">
+    	update management set title=#{title},content=#{content},image=#{image} where no=#{no}
+    </update>
+</mapper>
+
+    

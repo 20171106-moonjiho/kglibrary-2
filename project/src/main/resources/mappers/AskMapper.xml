@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+
+<mapper namespace="com.care.boot.askBoard.IAskBoardMapper">
+
+	<insert id="askWriteProc">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no),0)+1 FROM ask
+		</selectKey>
+		INSERT INTO ask 
+		VALUES(#{no}, #{title}, #{id}, #{time}, #{content}, #{image}, 'noreply')
+	</insert>
+    
+    <select id="totalCount">
+    	<choose>
+    		<when test="select == 'select'">
+    			select count(id) from ask where title like '%'||#{search}||'%'  		
+    		</when>
+    		<otherwise>
+    			select count(id) from ask
+    		</otherwise>
+    	</choose>
+    </select>
+    
+    <select id="askBoardContent" resultType="com.care.boot.askBoard.AskBoardDTO">
+    	select * from ask where no=#{no}	
+    </select>
+    
+    <select id="askForm" resultType="com.care.boot.askBoard.AskBoardDTO">
+    	<choose>
+    		<when test="sessionId == 'admin'">
+    			<choose>
+    				<when test="select == 'select'">
+    					SELECT B.* FROM (
+						SELECT ROWNUM as r, A.* FROM (
+						SELECT ask.* FROM ask where title like '%'||#{search}||'%' ORDER BY no DESC)A 
+						)B WHERE B.r BETWEEN #{begin} AND #{end}
+
+    				</when> 
+    				<otherwise>
+    					SELECT B.* FROM (
+						SELECT ROWNUM as r, A.* FROM (
+						SELECT ask.* FROM ask ORDER BY no DESC)A 
+						)B WHERE B.r BETWEEN #{begin} AND #{end}
+    				</otherwise>  	
+    			</choose>
+    		</when>
+    		<otherwise>
+    		<choose>
+    				<when test="select == 'select'">
+    					SELECT C.* FROM (
+						SELECT ROWNUM as r, B.* FROM (
+						SELECT A.* FROM(
+						SELECT ask.* FROM ask where id=#{sessionId})A 	
+						where title like '%'||#{search}||'%' ORDER BY no DESC)B 
+						)C WHERE C.r BETWEEN #{begin} AND #{end}
+
+    				</when> 
+    				<otherwise>
+    					SELECT B.* FROM (
+						SELECT ROWNUM as r, A.* FROM (
+						SELECT ask.* FROM ask where id=#{sessionId} ORDER BY no DESC)A 
+						)B WHERE B.r BETWEEN #{begin} AND #{end}
+    				</otherwise>  	
+    			</choose>
+    		</otherwise>
+    	</choose>
+    </select>
+    
+    <delete id="askBoardDeleteProc">
+    	delete from ask where no=#{n}
+    </delete>
+    
+    <update id="askBoardModify">
+    	update ask set title=#{title},content=#{content},image=#{image} where no=#{no}
+    </update>
+    
+    <update id="askReCount">
+    	update ask set replycount=#{recount} where no=#{countNum}
+    </update>
+    
+    <select id="findDeleteNo" resultType="com.care.boot.askBoard.AskBoardDTO">
+    	select * from ask where id=#{id}
+    </select>
+
+    
+</mapper>
+
+    

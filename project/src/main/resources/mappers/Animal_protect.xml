@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.care.boot.animal_protect.Animal_protect_Mapper">
+	
+	<select id="animal_protect">
+		<choose>
+			<when test="animal_group == '강아지'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT animal_protect.* FROM animal_protect WHERE animal_group= '${animal_group}' and area='${area}' and title like '%'||#{search}||'%' order by no DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<when test="animal_group == '고양이'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT animal_protect.* FROM animal_protect WHERE animal_group= '${animal_group}' and area= '${area}' and title like '%'||#{search}||'%' order by no DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<when test="animal_group == '기타 반려동물'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT animal_protect.* FROM animal_protect WHERE animal_group= '${animal_group}' and area= '${area}' and title like '%'||#{search}||'%' order by no DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<when test="animal_group == '전체'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT animal_protect.* FROM animal_protect WHERE title like '%'||#{search}||'%' order by no DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<otherwise>
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT animal_protect.* FROM animal_protect order by no DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="totalCount">
+		<choose>
+			<when test="animal_group == '강아지'">
+				SELECT count(no) FROM animal_protect where animal_group= '${animal_group}'
+				and area= '${area}' and title like '%'||#{search}||'%'
+			</when>
+			<when test="animal_group == '고양이'">
+				SELECT count(no) FROM animal_protect where animal_group= '${animal_group}'
+				and area= '${area}' and title like '%'||#{search}||'%'
+			</when>
+			<when test="animal_group == '기타 반려동물'">
+				SELECT count(no) FROM animal_protect where animal_group= '${animal_group}'
+				and area= '${area}' and title like '%'||#{search}||'%'
+			</when>
+			<when test="animal_group == '전체'">
+				SELECT count(no) FROM animal_protect where title like '%'||#{search}||'%'
+			</when>
+			<otherwise>
+				SELECT count(no) FROM animal_protect
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="animal_protect_Content" resultType="com.care.boot.animal_protect.Animal_protect_DTO">
+		SELECT * FROM animal_protect where no = #{n}
+	</select>
+	
+	<select id="animal_protect_main">
+			select A.* From (select * from animal_protect ORDER BY no DESC)A where <![CDATA[rownum < 5 ]]>
+	</select>
+	
+	<insert id="animal_protect_writeProc">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no), 0)+1 FROM animal_protect <!-- Max(no)를 했는데 null이라면 0을 
+				반환, 그게 아니면 +1 -->
+			<!-- 위 코드가 먼저 실행된후 나온 값이 keyProperty="no"로 인해 no라는 값에 저장되어 아래 코드로 넘어간다. -->
+		</selectKey>
+		INSERT INTO animal_protect
+		VALUES(#{no}, #{title}, #{id}, #{time}, #{content}, #{image}, #{image2}, #{image3},#{animal_group},
+		#{area}, #{areatext}, #{tel}, #{name},#{age},#{sex},#{day})
+	</insert>
+	
+	<delete id="ContentDeleteProc2">
+		DELETE FROM animal_protect WHERE no=#{n}
+	</delete>
+	
+	<update id="animal_protect_ModifyProc">
+		UPDATE animal_protect SET title=#{title}, content=#{content}, image=#{image}, animal_group=#{animal_group},area=#{area}, areatext=#{areatext},name=#{name}, age=#{age}, sex=#{sex}, day=#{day}, tel=#{tel}, image2=#{image2}, image3=#{image3} WHERE no=#{no}
+	</update>
+</mapper>

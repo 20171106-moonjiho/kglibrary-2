@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+
+<mapper namespace="com.care.boot.askBoard.IAskReplyMapper">
+
+	<insert id="askReplyWrite">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no),0)+1 FROM ask_reply
+		</selectKey>
+		INSERT INTO ask_reply
+		VALUES(#{no}, #{page_no}, #{id}, #{time}, #{content})
+	</insert>
+    
+    <select id="askReplyView" resultType="com.care.boot.askBoard.AskReplyDTO">
+    	select * from ask_reply where page_no=#{n} order by no ASC
+    </select>
+    
+    <select id="askReplyCunfirm" resultType="com.care.boot.askBoard.AskReplyDTO">
+    	select * from ask_reply where no =#{n} AND page_no=#{pn}
+    </select>
+    
+    <delete id="askReplyBoardDeleteProc">
+    	delete from ask_reply where no =#{n} AND page_no=#{pn}
+    </delete>
+    
+    <delete id="findDeleteRplyBoard">
+    	delete from ask_reply where page_no=#{no}
+    </delete>
+
+</mapper>
+
+    

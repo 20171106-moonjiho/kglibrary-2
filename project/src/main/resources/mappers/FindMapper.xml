@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 유기견 인증 게시판 -->
+<mapper namespace="com.care.boot.find.FindMapper">
+
+	<!-- <resultMap type="com.care.test1.find.findDTO" id="certification"> <result 
+		column="time" property="writeDate"/> </resultMap> -->
+
+	<!-- 게시글 목록 -->
+	<select id="findForm" resultType="com.care.boot.find.FindDTO">
+		SELECT B.* FROM (
+		SELECT ROWNUM as r,
+		A.* FROM (
+		SELECT certification.* FROM certification ORDER BY no DESC
+		)A
+		)B
+		WHERE B.r BETWEEN #{begin} AND #{end}
+		<!-- SELECT B.* FROM ( SELECT ROW_NUMBER() OVER (ORDER BY no DESC) AS r, 
+			A.* FROM ( SELECT * FROM CERTIFICATION ORDER BY no DESC )A )B WHERE B.r BETWEEN 
+			#{begin} AND #{end} -->
+	</select>
+
+	<select id="totalCount">
+		SELECT count(no) FROM certification
+	</select>
+
+	<!-- 글 등록 -->
+	<insert id="findWriteProc"
+		parameterType="com.care.boot.find.FindDTO">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no), 0)+1 FROM certification
+		</selectKey>
+		INSERT INTO certification(
+		NO,
+		TITLE,
+		ID,
+		TIME,
+		CONTENT,
+		IMAGE,
+		IMAGE2,
+		SPECIES
+		)
+		VALUES(
+		#{no},
+		#{title},
+		#{id},
+		#{time},
+		#{content},
+		#{image, jdbcType=VARCHAR},
+		#{image2, jdbcType=VARCHAR},
+		#{species}
+		)
+	</insert>
+
+	<select id="findContent"
+		resultType="com.care.boot.find.FindDTO" parameterType="int">
+		SELECT
+		NO,
+		TITLE,
+		ID,
+		TIME,
+		CONTENT,
+		IMAGE,
+		IMAGE2,
+		SPECIES,
+		CASE SPECIES
+		WHEN 'DOG' THEN '강아지'
+		WHEN 'CAT' THEN '고양이'
+		ELSE '기타 반려동물'
+		END AS SPECIES_KR
+		FROM certification
+		WHERE no=#{n}
+	</select>
+
+	<update id="incrementHits">
+		UPDATE certification SET hits=hits+1 WHERE no=#{n}
+	</update>
+
+	<delete id="deleteFind" parameterType="int">
+		DELETE FROM CERTIFICATION
+		WHERE NO=#{n}
+	</delete>
+
+	<update id="findEditProc"
+		parameterType="com.care.boot.find.FindDTO">
+		UPDATE CERTIFICATION
+		SET TITLE = #{title},
+		ID=#{id},
+		CONTENT=#{content},
+		<if test="!isSameImage">
+			IMAGE=#{image, jdbcType=VARCHAR},
+		</if>
+		<if test="!isSameImage2">
+			IMAGE2=#{image2, jdbcType=VARCHAR},
+		</if>
+		SPECIES=#{species}
+		WHERE NO = #{no}
+	</update>
+
+	<insert id="insertComment"
+		parameterType="com.care.boot.find.CommentDTO">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no), 0)+1 FROM CERTIFICATION_COMMENT
+		</selectKey>
+		INSERT INTO CERTIFICATION_COMMENT(
+		NO,
+		CERTIFICATION_NO,
+		NAME,
+		PASSWORD,
+		CONTENT
+		)VALUES(
+		#{no},
+		#{certification_no},
+		#{name},
+		#{password},
+		#{content}
+		)
+	</insert>
+
+	<!-- 댓글 목록 조회 -->
+	<select id="selectComments" parameterType="int"
+		resultType="com.care.boot.find.CommentDTO">
+		SELECT NO,
+		CERTIFICATION_NO,
+		NAME,
+		PASSWORD,
+		CONTENT,
+		TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT
+		FROM CERTIFICATION_COMMENT
+		WHERE CERTIFICATION_NO=#{n}
+	</select>
+
+	<delete id="deleteComment" parameterType="com.care.boot.find.CommentDTO">
+	DELETE FROM CERTIFICATION_COMMENT WHERE CERTIFICATION_NO=#{certification_no} AND NO = #{no}
+	</delete>
+</mapper>

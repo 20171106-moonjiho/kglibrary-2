@@ -1,0 +1,81 @@
+@charset "utf-8";
+/* CSS Document */
+body,ul,li,ol,p,h1,h2,h3,h4,h5,h6{margin: 0; padding: 0;}
+body{font: normal 12px "맑은고딕",Malgun Gothic, serif;}
+ul{list-style: none;}
+img{border: 0; vertical-align: top;}
+a{text-decoration: none;}
+
+.header{width: 100%; height: 120px; background: #fff;}
+.header .header_login{width: 100%; height: 20px; display: inline-block;}
+.header .header_login .pc_login{float: right;margin-right: 120px; margin-top: 20px; }
+.header .header_login .pc_login li{float: left; margin-right: 10px;}
+.header .header_login .pc_login li a{color: #000; font-size: 13px;}
+
+.header .logo {text-align: center;}
+.header .logo img{width: 130px;}
+
+.header_menu{width:100%;height:50px;border-bottom:1px solid #e5e5e5; position:absolute;top:110px; background: #fff; z-index: 3;padding-top: 5px;
+box-sizing: border-box; }
+.header_menu .nav{width: 1150px; height: 40px;margin: 0 auto; text-align: center; line-height: 45px;}
+.header_menu .nav .gnb{}
+.header_menu .nav .gnb >li{float: left;width: 160px; height: 30px; line-height: 30px; text-align: center; }
+.header_menu .nav .gnb >li:first-child{margin-left: 200px;}
+.header_menu .nav .gnb >li:last-child{margin-right: 0;}
+.header_menu .nav .gnb >li >a{color: #000; font-size: 15px; font-weight: bold; }
+.header_menu .nav .gnb >li >a:hover{color: #ffc22f;  transition: 0.2s ease-out; opacity : 0.8;}
+.header_menu .nav .gnb ul{ position:relative;z-index: 3; display: none;margin-top: -3px; box-shadow: 1px 1px 1px #dedede;}
+.header_menu .nav .gnb ul li{height: 30px;text-align: center; line-height: 30px;background: #fff; }
+.header_menu .nav .gnb ul li a{color: #000; font-size: 14px; font-weight: bold}
+.header_menu .nav .gnb ul li a:hover{color: #ffc22f;  transition: 0.2s ease-out; opacity : 0.8;}
+.content {margin: 0 auto; width: 100%;  text-align: center; color: #000; clear: left; margin-top: 65px; overflow: hidden;}
+.bottom{margin: 0 auto; text-align: center; background: #fafafa; height: 450px; color: #000;padding: 30px;}
+
+.animal_info{width: 1200px; margin: 0 auto; margin-top: 30px;}
+.animal_info>ul>li {display: inline-block;}
+.animal_info>ul>li img{width:280px }
+
+.more{background: #fff;color: #777; font-size: 15px; width:85px; margin: 0 auto; margin-top: 15px; padding: 10px; border: 1px solid #dedede}
+.more:hover{background: #FFC22f; color: #fff; border: 1px solid #ffc22f;  transition: 0.2s ease-out; opacity : 0.8;cursor: pointer;}
+.more:not(:hover){transition: 0.2s ease-out;}
+.footer{width: 100%; height: 65px; background: #fff; margin-top:60px;}
+.footer_top{width: 100%;height:60px;  border-top: 1px solid #e5e5e5;position: relative;}
+.footer_logo{width: 120px; margin: 0 auto; margin-top: 15px;}
+.footer_in2{float: left;width: 100%; text-align: center;color: #000;font-size: 15px;line-height: 1.5;padding-top: 30px; box-sizing: border-box;margin-bottom: 15px;}
+
+.jssorb057 .i {position:absolute;cursor:pointer;}
+        .jssorb057 .i .b {fill:none;stroke:#fff;stroke-width:2200;stroke-miterlimit:10;stroke-opacity:0.4;}
+        .jssorb057 .i:hover .b {stroke-opacity:.7;}
+        .jssorb057 .iav .b {stroke-opacity: 1;}
+        .jssorb057 .i.idn {opacity:.3;}
+        /* jssor slider arrow navigator skin 22 css */
+        /*
+        .jssora22l                  (normal)
+        .jssora22r                  (normal)
+        .jssora22l:hover            (normal mouseover)
+        .jssora22r:hover            (normal mouseover)
+        .jssora22l.jssora22ldn      (mousedown)
+        .jssora22r.jssora22rdn      (mousedown)
+        .jssora22l.jssora22lds      (disabled)
+        .jssora22r.jssora22rds      (disabled)
+        */
+        .jssora22l, .jssora22r {
+            display: block;
+            position: absolute;
+            /* size of arrow element */
+            width: 40px;
+            height: 58px;
+            cursor: pointer;
+            background: url('img/a22.png') center center no-repeat;
+            overflow: hidden;
+        }
+        .jssora22l { background-position: -10px -31px; }
+        .jssora22r { background-position: -70px -31px; }
+        .jssora22l:hover { background-position: -130px -31px; }
+        .jssora22r:hover { background-position: -190px -31px; }
+        .jssora22l.jssora22ldn { background-position: -250px -31px; }
+        .jssora22r.jssora22rdn { background-position: -310px -31px; }
+        .jssora22l.jssora22lds { background-position: -10px -31px; opacity: .3; pointer-events: none; }
+        .jssora22r.jssora22rds { background-position: -70px -31px; opacity: .3; pointer-events: none; }
+
+		.a1{margin-left:100px;}

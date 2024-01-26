@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+
+<mapper namespace="com.care.boot.member.IMemberMapper">
+
+	<select id="login" resultType="com.care.boot.member.MemberDTO">
+		select * from member where id=#{id}
+	</select>
+	
+	<insert id="registProc">
+		insert into member 
+		values(member_seq.nextval, #{name}, #{id}, #{pw}, #{tel}, #{email}, #{address})
+	</insert>
+
+	<update id="updateProc">
+		update member set name=#{name},pw=#{pw},tel=#{tel},email=#{email},address=#{address} where id=#{id}
+	</update>
+    
+    <delete id="deleteProc">
+    	delete from member where id=#{id}
+    </delete>
+    
+    <select id="totalCount">
+    	<choose>
+    		<when test="select == 'id'">
+    			select count(id) from member where id like '%'||#{search}||'%'  		
+    		</when>
+    		<when test="select == 'tel'">
+    			select count(id) from member where tel like '%'||#{search}||'%' 
+    		</when>
+    		<otherwise>
+    			select count(id) from member
+    		</otherwise>
+    	</choose>
+    </select>
+    
+    <select id="memberInfo" resultType="com.care.boot.member.MemberDTO">
+    	<choose>
+    		<when test="select == 'id'">
+    			select A.*from (select rownum as r, member.* from member 
+    			where id like '%'||#{search}||'%')A 
+    			where A.r between #{begin} and #{end}
+    		</when> 
+    		<when test="select == 'tel'">
+    			select A.*from (select rownum as r, member.* from member 
+    			where tel like '%'||#{search}||'%')A 
+    			where A.r between #{begin} and #{end}
+    		</when> 
+    		<otherwise>
+    			select A.*from (select rownum as r, member.* from member)A 
+    			where A.r between #{begin} and #{end}
+    		</otherwise>
+    	
+    	</choose>
+    </select>
+    
+    
+</mapper>
+    

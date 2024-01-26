@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.care.boot.animal_info.Animal_info_Mapper">
+
+	<select id="animal_info">
+		<choose>
+			<when test="search_select == '제목'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT
+				animal_info.* FROM animal_info WHERE title like '%'||#{search}||'%' order by no
+				DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<when test="search_select == '글쓴이'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT
+				animal_info.* FROM animal_info WHERE id like '%'||#{search}||'%' order by no
+				DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<otherwise>
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT
+				animal_info.* FROM animal_info order by no DESC)A)B WHERE B.r
+				BETWEEN #{begin} and #{end}
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="totalCount">
+			<choose>
+			<when test="search_select == '제목'">
+				SELECT count(no) FROM animal_info where title like '%'||#{search}||'%'
+			</when>
+			<when test="search_select == '글쓴이'">
+				SELECT count(no) FROM animal_info where id like '%'||#{search}||'%'
+			</when>
+			<otherwise>
+				SELECT count(no) FROM animal_info
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="animal_info_Content"
+		resultType="com.care.boot.animal_info.Animal_info_DTO">
+		SELECT * FROM animal_info where no = #{n}
+	</select>
+
+	<insert id="animal_info_writeProc">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no), 0)+1 FROM animal_info <!-- Max(no)를 했는데 null이라면 0을 
+				반환, 그게 아니면 +1 -->
+			<!-- 위 코드가 먼저 실행된후 나온 값이 keyProperty="no"로 인해 no라는 값에 저장되어 아래 코드로 넘어간다. -->
+		</selectKey>
+		INSERT INTO animal_info
+		VALUES(#{no}, #{title}, #{id}, #{content},
+		#{writeDate},0,#{image})
+	</insert>
+
+	<update id="incrementHits">
+		update animal_info set hits=hits+1 where no=#{n}
+	</update>
+
+	<delete id="ContentDeleteProc3">
+		DELETE FROM animal_info WHERE no=#{n}
+	</delete>
+
+	<update id="animal_info_ModifyProc">
+		UPDATE animal_info SET title=#{title}, content=#{content}, image=#{image} WHERE no=#{no}
+	</update>
+	
+	<select id="askReplyCunfirm2" resultType="com.care.boot.animal_info.Animal_info_comment_DTO">
+    	select * from animal_info_comment where no =#{n} AND page_no=#{pn}
+    </select>
+    
+     <select id="askReplyView2" resultType="com.care.boot.animal_info.Animal_info_comment_DTO">
+    	select * from animal_info_comment where page_no=#{n} order by no ASC
+    </select>
+    
+    <delete id="askReplyBoardDeleteProc2">
+    	delete from animal_info_comment where no =#{n} AND page_no=#{pn}
+    </delete>
+    
+    <insert id="askReplyWrite2">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no),0)+1 FROM animal_info_comment
+		</selectKey>
+		INSERT INTO animal_info_comment
+		VALUES(#{no}, #{page_no}, #{id}, #{time}, #{content})
+	</insert>
+</mapper>

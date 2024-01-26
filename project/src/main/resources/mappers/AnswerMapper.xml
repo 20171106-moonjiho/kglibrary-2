@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+
+<mapper namespace="com.care.boot.answerBoard.IAnswerBoardMapper">
+
+	<insert id="answerWriteProc">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no),0)+1 FROM answer
+		</selectKey>
+		INSERT INTO answer 
+		VALUES(#{no}, #{title}, #{id}, #{time}, #{content}, #{image})
+	</insert>
+    
+    <select id="totalCount">
+    	<choose>
+    		<when test="select == 'select'">
+    			select count(id) from answer where title like '%'||#{search}||'%'  		
+    		</when>
+    		<otherwise>
+    			select count(id) from answer
+    		</otherwise>
+    	</choose>
+    </select>
+    
+    <select id="answerBoardContent" resultType="com.care.boot.answerBoard.AnswerBoardDTO">
+    	select * from answer where no=#{no}	
+    </select>
+    
+    <select id="answerForm" resultType="com.care.boot.answerBoard.AnswerBoardDTO">
+ 
+    	<choose>
+    		<when test="select == 'select'">
+    			SELECT B.* FROM (
+				SELECT ROWNUM as r, A.* FROM (
+				SELECT answer.* FROM answer where title like '%'||#{search}||'%' ORDER BY no DESC)A 
+				)B WHERE B.r BETWEEN #{begin} AND #{end}
+
+    		</when> 
+    		<otherwise>
+    			SELECT B.* FROM (
+				SELECT ROWNUM as r, A.* FROM (
+				SELECT answer.* FROM answer ORDER BY no DESC)A 
+				)B WHERE B.r BETWEEN #{begin} AND #{end}
+    		</otherwise>
+    	
+    	</choose>
+    	
+    	
+    </select>
+    
+    <delete id="answerBoardDeleteProc">
+    	delete from answer where no=#{no}
+    </delete>
+    
+    <update id="answerBoardModify">
+    	update answer set title=#{title},content=#{content},image=#{image} where no=#{no}
+    </update>
+</mapper>
+
+    

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.kg.library.culture.CultureMapper">
+
+
+	<select id="cultureboard">
+		<choose>
+			<when test="search_select == '행사명'">
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT
+				culture.* FROM culture WHERE title like '%'||#{search}||'%' order by
+				no
+				DESC)A)B WHERE B.r BETWEEN #{begin} and #{end}
+			</when>
+			<otherwise>
+				SELECT B.* FROM (SELECT rownum as r, A.* FROM (SELECT
+				culture.* FROM culture order by no DESC)A)B WHERE B.r
+				BETWEEN
+				#{begin} and #{end}
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="totalCount">
+		<choose>
+			<when test="search_select == '행사명'">
+				SELECT count(no) FROM culture where title like
+				'%'||#{search}||'%'
+			</when>
+			<when test="search_select == '내용'">
+				SELECT count(no) FROM culture where id like
+				'%'||#{search}||'%'
+			</when>
+			<otherwise>
+				SELECT count(no) FROM culture
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="cultureContent"
+		resultType="com.kg.library.culture.CultureDTO">
+		SELECT * FROM culture where no = #{n}
+	</select>
+	
+	<select id="registContent"
+		resultType="com.kg.library.culture.RegistDTO">
+		SELECT * FROM regist where no = #{n}
+	</select>
+
+	<insert id="culture_writeProc">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no), 0)+1 FROM culture <!-- Max(no)를 했는데 null이라면 0을 반환, 
+				그게 아니면 +1 -->
+			<!-- 위 코드가 먼저 실행된후 나온 값이 keyProperty="no"로 인해 no라는 값에 저장되어 아래 코드로 넘어간다. -->
+		</selectKey>
+		INSERT INTO culture
+		VALUES(#{no}, #{title}, #{id},
+		#{class_period_start},#{class_period_end},
+		#{reservation_period_start},#{reservation_period_end},#{target},
+		#{event_area},#{reception_area},#{people},#{money},#{teacher},#{contents},#{image},0,#{select_cate},#{writeDate})
+	</insert>
+
+	<delete id="CultureDeleteProc">
+		delete from culture where no=#{n}
+	</delete>
+
+	<update id="cultureModifyPro">
+		UPDATE culture
+		SET
+		title = #{title},
+		class_period_start = #{class_period_start},
+		class_period_end = #{class_period_end},
+		reservation_period_start = #{reservation_period_start},
+		reservation_period_end = #{reservation_period_end},
+		target = #{target},
+		event_area = #{event_area},
+		reception_area = #{reception_area},
+		people = #{people},
+		money = #{money},
+		teacher = #{teacher},
+		contents = #{contents},
+		image = #{image},
+		select_cate = #{select_cate}
+		WHERE
+		no = #{no}
+	</update>
+	
+	<select id="login">
+		SELECT * FROM member WHERE id=#{id}
+	</select>
+	
+	<insert id="registWritePro">
+		<selectKey order="BEFORE" keyProperty="no" resultType="int">
+			SELECT NVL(max(no), 0)+1 FROM regist <!-- Max(no)를 했는데 null이라면 0을 반환, 
+				그게 아니면 +1 -->
+			<!-- 위 코드가 먼저 실행된후 나온 값이 keyProperty="no"로 인해 no라는 값에 저장되어 아래 코드로 넘어간다. -->
+		</selectKey>
+		INSERT INTO regist
+		VALUES(#{no}, #{id}, #{title},
+		#{name},#{p_name},
+		#{tel},#{email},#{address},
+		#{es_school},#{es_hak},#{es_ban},#{contents},1)
+	</insert>
+	
+	<select id="applicants_count">
+	SELECT applicants from culture where no=#{no}
+	</select>
+
+	
+	<select id ="registCount" parameterType="com.kg.library.culture.RegistDTO">
+	SELECT count(id) FROM regist where title = #{title} and id = #{sessionId}
+	</select>
+
+	<select id ="apply_ck" parameterType="com.kg.library.culture.RegistDTO">
+	SELECT apply_ck FROM regist where title = #{title} and id = #{sessionId}
+	</select>
+	
+	<select id ="applicants" parameterType="com.kg.library.culture.RegistDTO">
+	SELECT count(no) FROM regist where title = #{title}
+	</select>
+	
+	<update id="updateApplicantsCount">
+    UPDATE culture
+    SET applicants = #{applicants}
+    WHERE no=#{no} <!-- 어떤 레코드를 업데이트할지에 대한 조건 -->
+	</update>
+	
+	<select id="registboard" resultType="com.kg.library.culture.RegistDTO">
+    SELECT * FROM regist WHERE title = #{title} AND id = #{sessionId}
+	</select>
+	
+	<delete id="registDelete">
+		delete from regist where title = #{title} AND id = #{sessionId}
+	</delete>
+		
+	<select id="main_board">
+			select A.* From (select * from culture ORDER BY no DESC)A where <![CDATA[rownum < 5 ]]>
+	</select>
+</mapper>
