@@ -212,40 +212,40 @@ public class MemberController {
 //		model.addAttribute("reservations",service.preReservation(sessionId));
 //    	return "member/preReservation";
 //    }
-//    
-//    @RequestMapping("myBook")
-//    public String myBook(Model model) {
-//    	model.addAttribute("menu","myBook");
-//    	String sessionId = (String)session.getAttribute("id");
-//    	if(sessionId == null) 
-//    		return "redirect:login";
-//    	
-//    	service.myBook(model, sessionId);
-//    	
-//    	return "member/myBook";
-//    }
     
-//    @RequestMapping("borrowDateExtend")
-//    public String borrowDateExtend(Model model, String no) {
-//        String sessionId = (String) session.getAttribute("id");
-//        if (sessionId == null)
-//            return "redirect:login";
-//        
-//        service.borrowDateExtend(model, no, sessionId);
-//        //model.addAttribute("board", board);
-//        return "redirect:myBook";
-//    }
+    @RequestMapping("myBook")
+    public String myBook(Model model) {
+    	model.addAttribute("menu","myBook");
+    	String sessionId = (String)session.getAttribute("id");
+    	if(sessionId == null) 
+    		return "redirect:login";
+    	
+    	service.myBook(model, sessionId);
+    	
+    	return "member/myBook";
+    }
+    
+    @RequestMapping("borrowDateExtend")
+    public String borrowDateExtend(Model model, String no) {
+        String sessionId = (String) session.getAttribute("id");
+        if (sessionId == null)
+            return "redirect:login";
+        
+        service.borrowDateExtend (no, sessionId);
+        //model.addAttribute("board", board);
+        return "redirect:myBook";
+    }
 
-//    @RequestMapping("returnProc2")
-//	public String returnProc2(String no) {
-//			
-//		String sessionId = (String) session.getAttribute("id");
-//		if (sessionId == null || sessionId.trim().isEmpty()) 
-//		return "redirect:myBook";
-//		
-//		service.returnProc2(no);
-//		return "redirect:myBook";	
-//	}
+    @RequestMapping("returnProc2")
+	public String returnProc2(String no) {
+			
+		String sessionId = (String) session.getAttribute("id");
+		if (sessionId == null || sessionId.trim().isEmpty()) 
+		return "redirect:myBook";
+		
+		service.returnProc2(no);
+		return "redirect:myBook";	
+	}
     
     @RequestMapping("findIdPw")
     public String findIdPw(Model model) {
