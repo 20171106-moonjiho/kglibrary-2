@@ -56,13 +56,7 @@ public class Introduction_Service {
 	            );
 
 		 	  List<Map<String, Object>> dataStatus = responseEntity.getBody();
-		 			        
-		 	  for (Map<String, Object> data : dataStatus) {
-		 		 System.out.println("Received data from the first project: " + data);
-		            System.out.println("8087에서 얻어온 : Category : " + data.get("CATEGORY"));
-		            System.out.println("8087에서 얻어온 : Count : " + data.get("BOOKCOUNT"));
-		            System.out.println("8087에서 얻어온 : TOTALBOOKCOUNT : " + data.get("TOTALBOOKCOUNT"));
-		        }
+
 			 	 return dataStatus;
 	            
 	        } catch (HttpClientErrorException.NotFound notFoundException) {
