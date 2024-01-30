@@ -24,13 +24,16 @@ studyroom varchar2(50)); -->
 		<result column="tel" property="tel"/>	
 	</resultMap>
 	
-	<insert id="joinProc">
+	<!-- <insert id="joinProc">
 		INSERT INTO member
 		VALUES(#{id}, #{pw}, #{name}, #{email}, #{address}, #{tel})
+		INSERT INTO member (id, pw, name, email, address, tel)
+        VALUES (?, ?, ?, ?, ?, ?);
 	</insert>
 	
 	<select id="login" resultMap="member">
 		SELECT * FROM member WHERE id=#{id}
+		SELECT * FROM member WHERE id = ?;
 	</select>
 	
 	<select id="memberInfo" resultMap="member">
@@ -90,5 +93,84 @@ studyroom varchar2(50)); -->
 	
 	<update id="findPwResult">
 		UPDATE member SET pw=#{secretPass} WHERE id=#{id} AND tel=#{tel}
-	</update>
+	</update> -->
+	
+	<insert id="joinProc">
+    <!-- INSERT INTO member (id, pw, name, email, address, tel) VALUES (#{id}, #{pw}, #{name}, #{email}, #{address}, #{tel}) -->
+    INSERT INTO member (id, pw, name, email, address, tel) VALUES (?, ?, ?, ?, ?, ?);
+</insert>
+
+<select id="login" resultMap="member">
+    <!-- SELECT * FROM member WHERE id=#{id} -->
+    SELECT * FROM member WHERE id = ?;
+</select>
+
+<select id="memberInfo" resultMap="member">
+    <choose>
+        <when test="select == 'id'">
+            SELECT * FROM (
+                SELECT id, name, email, tel
+                FROM member
+                WHERE id LIKE CONCAT('%', ?, '%')
+                LIMIT ?, ?
+            ) AAA;
+        </when>
+        <when test="select == 'tel'">
+            SELECT * FROM (
+                SELECT id, name, email, tel
+                FROM member
+                WHERE tel LIKE CONCAT('%', ?, '%')
+                LIMIT ?, ?
+            ) AAA;
+        </when>
+        <otherwise>
+            SELECT * FROM (
+                SELECT id, name, email, tel
+                FROM member
+                LIMIT ?, ?
+            ) AAA;
+        </otherwise>
+    </choose>
+</select>
+
+<select id="totalCount">
+    <choose>
+        <when test="select == 'id'">
+            SELECT COUNT(id) FROM member WHERE id LIKE CONCAT('%', ?, '%');
+        </when>
+        <when test="select == 'tel'">
+            SELECT COUNT(id) FROM member WHERE tel LIKE CONCAT('%', ?, '%');
+        </when>
+        <otherwise>
+            SELECT COUNT(id) FROM member;
+        </otherwise>
+    </choose>
+</select>
+
+<update id="updateProc">
+    UPDATE member
+    SET pw=?, name=?, email=?, address=?, tel=?
+    WHERE id=?;
+</update>
+
+<delete id="deleteProc">
+    DELETE FROM member WHERE id=?;
+</delete>
+
+<select id="findId" resultMap="member">
+    SELECT * FROM member WHERE name=? AND tel=?;
+</select>
+
+<select id="findIdResult">
+    SELECT id FROM member WHERE name=? AND tel=?;
+</select>
+
+<select id="findPw" resultMap="member">
+    SELECT * FROM member WHERE id=? AND tel=?;
+</select>
+
+<update id="findPwResult">
+    UPDATE member SET pw=? WHERE id=? AND tel=?;
+</update>
+	
 </mapper>
