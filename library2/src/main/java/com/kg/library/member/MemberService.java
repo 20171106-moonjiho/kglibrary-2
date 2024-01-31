@@ -235,7 +235,7 @@ public class MemberService {
 		// String userId = id; // (String)session.getAttribute("id");
 
 		// 서버에게 ID를 전송하는 URL
-		String apiUrl = "http://localhost:8087/requestMyBook";
+		String apiUrl = "http://www.bowfun.link/requestMyBook";
 
 		// POST 요청을 위한 헤더 및 본문 설정 (어떤 데이터 형식으로 보낼지 결정하는 부분) / 손잡이(재료)
 		HttpHeaders headers = new HttpHeaders();
@@ -288,7 +288,7 @@ public class MemberService {
 		RestTemplate restTemplate = new RestTemplate();
 
 		// 서버에게 ID를 전송하는 URL
-		String apiUrl = "http://localhost:8087/requestDateExtend";
+		String apiUrl = "/requestDateExtend";
 
 		// POST 요청을 위한 헤더 및 본문 설정 (어떤 데이터 형식으로 보낼지 결정하는 부분) / 손잡이(재료)
 		HttpHeaders headers = new HttpHeaders();
@@ -321,7 +321,7 @@ public class MemberService {
 		RestTemplate restTemplate = new RestTemplate();
 
 		// 서버에게 ID를 전송하는 URL
-		String apiUrl = "http://localhost:8087/requestreturnProc2";
+		String apiUrl = "/requestreturnProc2";
 
 		// POST 요청을 위한 헤더 및 본문 설정 (어떤 데이터 형식으로 보낼지 결정하는 부분) / 손잡이(재료)
 		HttpHeaders headers = new HttpHeaders();

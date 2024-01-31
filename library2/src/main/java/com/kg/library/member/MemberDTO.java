@@ -14,6 +14,18 @@ email varchar2(50) not null,
 address varchar2(100),
 tel varchar2(20) not null
 );
+
+
+-mariadb ver-
+CREATE TABLE member (
+    id VARCHAR(20) NOT NULL PRIMARY KEY,
+    pw VARCHAR(100) NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    address VARCHAR(100),
+    tel VARCHAR(20) NOT NULL
+);
+
 */
 
 public class MemberDTO {
