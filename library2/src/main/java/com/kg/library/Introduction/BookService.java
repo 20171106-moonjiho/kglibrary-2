@@ -479,7 +479,7 @@ public void hit_book(Model model) {
 		
 	    try {
             ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
-                    "http://localhost:8087/hit_book",
+                    "/hit_book",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ArrayList<BookDTO>>() {}
@@ -512,7 +512,7 @@ public void new_book(Model model) {
 	
     try {
         ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
-                "http://localhost:8087/new_Book",
+                "/new_Book",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<ArrayList<BookDTO>>() {}
