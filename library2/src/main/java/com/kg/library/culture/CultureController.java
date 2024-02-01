@@ -71,7 +71,7 @@ public class CultureController {
 	
 	@RequestMapping("cultureContent")
 	public String cultureContent(String no,Model model) {
-		CultureDTO board = service.cultureContent(no);
+		CultureDTO board = service.cultureContent(no,model);
 		if(board == null) {
 			return "redirect:cultureboard";
 		}

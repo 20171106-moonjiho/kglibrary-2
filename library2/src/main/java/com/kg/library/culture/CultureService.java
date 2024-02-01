@@ -2,6 +2,9 @@ package com.kg.library.culture;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +19,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.kg.library.PageService;
 
 import jakarta.servlet.http.HttpSession;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
 public class CultureService {
@@ -25,9 +34,15 @@ public class CultureService {
 		
 	@Autowired
 	private HttpSession session;
-	private String filePath = "C:\\Users\\user1\\git\\kglibrary\\library\\src\\main\\resources\\static\\img\\";
+//	private String filePath = "C:\\Users\\user1\\git\\kglibrary\\library\\src\\main\\resources\\static\\img\\";
 	
-	
+	// s3에 이미지 추가
+		private String bucketName = "kglibrary"; // S3 버킷 이름
+		private String s3FilePath = "static/img/"; // S3에 업로드할 경로
+
+		@Autowired
+		private S3Client s3Client; // AWS S3 클라이언트 주입
+		
 	public void cultureboard(String search_select, String search, String cp, Model model) {
 		String sessionId = (String) session.getAttribute("id");
 //		System.out.println("1111");
@@ -50,23 +65,26 @@ public class CultureService {
 		
 		ArrayList<CultureDTO> boards = mapper.cultureboard(begin,end,search_select,search);
 //		
-		if(boards != null) {
+		if (boards != null) {
 			List<String> apply_ckList = new ArrayList<>();
-			for(CultureDTO b : boards) {
+			List<String> imageUrl_List = new ArrayList<>();
+			for (CultureDTO b : boards) {
+				
 				if(b.getImage()!=null) {
-					String[] names= b.getImage().split("/");
-					String[] fileNames = names[1].split("-",2);
-					b.setImage(names[1]);
-					}
-				if(sessionId!=null) {
-					String apply_ck = mapper.apply_ck(b.getTitle(),sessionId);
+					String imageUrl = getS3ObjectUri(b.getImage());
+					System.out.println("보드 이미지 주소: " + imageUrl);
+					imageUrl_List.add(imageUrl);
+				}
+				
+				if (sessionId != null) {
+					String apply_ck = mapper.apply_ck(b.getTitle(), sessionId);
 					apply_ckList.add(apply_ck);
-					
 				}
 				String applicants = mapper.applicants(b.getTitle());
 				b.setApplicants(applicants);
-				mapper.updateApplicantsCount(applicants,b.getNo());
+				mapper.updateApplicantsCount(applicants, b.getNo());
 			}
+			model.addAttribute("imageUrl",imageUrl_List);
 			model.addAttribute("apply_ckList", apply_ckList);
 		}
 		int totalCount = mapper.totalCount(search_select, search); // 테이블의 행의 갯수 를 구해 오기위함
@@ -146,22 +164,27 @@ public class CultureService {
 			}
 
 			// 파일의 저장 경로
-			String fileSaveDirectory = filePath + sessionId;
-			File f = new File(fileSaveDirectory);// 파일 객체 생성 으로 sessionId위치에 폴더가 있는지 없는지 확인 하기
-			if (f.exists() == false) {
-				// 저장경로가 없을 경우
-				// f.mkdir();
-				f.mkdirs();// 자동으로 만들어 줄 수 있게 한다.
-			}
-			// \\(역슬러시)를 /(슬러시로)
+			String fileSaveDirectory = "kglibrary/" + sessionId; // S3 버킷 경로
 			String fullPath = fileSaveDirectory + "/" + fileTime + fileName;
-			board.setImage(fullPath);
-			f = new File(fullPath); // 파일 객체에 저장경로에 대한 정보 넣어주기.
-			try {
-				file.transferTo(f);// 파일 저장.
+			// 파일명만 추출
+			String uploadedFileName = extractFileName(fullPath);
+			// AWS S3에 업로드할 경로 설정
+			String s3Key = s3FilePath + sessionId + "/" + fileTime + fileName;
+
+			// 파일 업로드를 위한 코드
+			try (InputStream fileInputStream = file.getInputStream()) {
+				// S3에 업로드할 파일의 크기
+				long fileSize = file.getSize();
+
+				// S3에 업로드할 객체 생성
+				PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(s3Key).build();
+
+				// S3에 파일 업로드
+				s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(fileInputStream, fileSize));
+				board.setImage(s3Key);
 			} catch (IOException e) {
 				e.printStackTrace();
-				board.setImage("");// 예외가 발생하면 빈문자열을 넣어줄때.
+				board.setImage("");
 			}
 		}
 		
@@ -169,8 +192,17 @@ public class CultureService {
 		return "redirect:cultureboard";
 	}
 
-
-	public CultureDTO cultureContent(String no) {
+	// 파일 경로에서 파일명만 추출하는 메서드
+		private String extractFileName(String filePath) {
+			Path path = Paths.get(filePath);
+			if (path.getNameCount() > 0) {
+				return path.getFileName().toString();
+			} else {
+				return filePath;
+			}
+		}
+		
+	public CultureDTO cultureContent(String no, Model model) {
 		int n = 1;
 		try {
 			n = Integer.parseInt(no);
@@ -179,43 +211,55 @@ public class CultureService {
 		}
 		CultureDTO board = mapper.cultureContent(n);
 		
-		if(board != null) {
-			
-			if(board.getImage()!=null) {
-			String[] names=board.getImage().split("/");
-//			for(String name : names) {
-//			System.out.println("컨텐츠 name: " +name);
-//			}
-			String[] fileNames = names[1].split("-",2);
-//			for(String fileName : fileNames) {
-//				System.out.println("fileName: " +fileName);
-//				}
-			board.setImage(names[1]);
+		if (board != null) {
+			if (board.getImage() != null) {
+				// s3 url 주소 얻기
+				String imageUrl = getS3ObjectUri(board.getImage());
+				System.out.println("이미지 주소: " + imageUrl);
+				model.addAttribute("imageUrl", imageUrl);
 			}
 		}
 		
 		return board;
 	}
+	
+	private String getS3ObjectUri(String s3Key) {
+		if (s3Key == null || s3Key.trim().isEmpty()) {
+			// s3Key가 null 또는 빈 문자열인 경우에 대한 예외 처리
+			return ""; // 또는 다른 기본값 설정
+		}
 
+		GetUrlRequest getUrlRequest = GetUrlRequest.builder().bucket(bucketName).key(s3Key).build();
+
+		return s3Client.utilities().getUrl(getUrlRequest).toExternalForm();
+	}
 
 	public String CultureDeleteProc(String no) {
 		int n = 0;
 		try {
 			n = Integer.parseInt(no);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			return "게시글 번호에 문제가 발생하였습니다.";
-		}	
-		
+		}
+
 		CultureDTO board = mapper.cultureContent(n);
-		
+
 		String sessionId = (String) session.getAttribute("id");
-		if(board.getId().equals(sessionId) == false)
+		if (board.getId().equals(sessionId) == false)
 			return "작성자만 삭제 가능합니다.";
+
 		String fullPath = board.getImage();
-		if(fullPath != null) { // 테이블에 파일의 경로와 이름이 있다면
-			File f = new File(fullPath);
-			if(f.exists() == true) // 파일 저장소에 파일이 존재한다면
-				f.delete();
+		if (fullPath != null) { // 테이블에 파일의 경로와 이름이 있다면
+			try {
+				// S3에서 객체 삭제
+				String s3Key = s3FilePath + sessionId + "/" + extractFileName(fullPath);
+				DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(s3Key)
+						.build();
+				s3Client.deleteObject(deleteObjectRequest);
+			} catch (S3Exception e) {
+				e.printStackTrace();
+				// 예외 발생 시 사용자에게 메시지 전달 또는 로깅 등 추가 처리가 필요합니다.
+			}
 		}
 		mapper.CultureDeleteProc(n);
 		return "게시글 삭제 완료";
@@ -230,17 +274,15 @@ public class CultureService {
 			return "redirect:cultureboard";
 		}
 		CultureDTO board = mapper.cultureContent(n);
+		String fileName = extractFileName(board.getImage());
 		String content = board.getContents().replaceAll("<br>", "\r\n");
 		board.setContents(content);
-		if(board==null) {
+		if (board == null) {
 			return "redirect:cultureboard";
 		}
-		if(board.getImage() != null) {
-			String[] names= board.getImage().split("\\\\");
-			String[] fileNames = names[11].split("-", 2);
-			board.setImage(fileNames[1]);
-		}
-		model.addAttribute("board",board);
+
+		model.addAttribute("board", board);
+		model.addAttribute("fileName", fileName);
 		return "culture/cultureModify";
 	}
 
@@ -305,22 +347,25 @@ public class CultureService {
 			}
 
 			// 파일의 저장 경로
-			String fileSaveDirectory = filePath + sessionId;
-			File f = new File(fileSaveDirectory);// 파일 객체 생성 으로 sessionId위치에 폴더가 있는지 없는지 확인 하기
-			if (f.exists() == false) {
-				// 저장경로가 없을 경우
-				// f.mkdir();
-				f.mkdirs();// 자동으로 만들어 줄 수 있게 한다.
-			}
-			// \\(역슬러시)를 /(슬러시로)
+			String fileSaveDirectory = "kglibrary/" + sessionId; // S3 버킷 경로
 			String fullPath = fileSaveDirectory + "/" + fileTime + fileName;
-			board.setImage(fullPath);
-			f = new File(fullPath); // 파일 객체에 저장경로에 대한 정보 넣어주기.
-			try {
-				file.transferTo(f);// 파일 저장.
+			// AWS S3에 업로드할 경로 설정
+			String s3Key = s3FilePath + sessionId + "/" + fileTime + fileName;
+
+			// 파일 업로드를 위한 코드
+			try (InputStream fileInputStream = file.getInputStream()) {
+				// S3에 업로드할 파일의 크기
+				long fileSize = file.getSize();
+
+				// S3에 업로드할 객체 생성
+				PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(s3Key).build();
+
+				// S3에 파일 업로드
+				s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(fileInputStream, fileSize));
+				board.setImage(s3Key);
 			} catch (IOException e) {
 				e.printStackTrace();
-				board.setImage("");// 예외가 발생하면 빈문자열을 넣어줄때.
+				board.setImage("");
 			}
 		}
 		if(board.getImage()==null) {
