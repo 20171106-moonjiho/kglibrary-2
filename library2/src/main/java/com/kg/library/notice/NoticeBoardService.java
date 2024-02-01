@@ -175,7 +175,10 @@ public class NoticeBoardService {
 			System.out.println("이미지 주소: " + imageUrl);
 			model.addAttribute("imageUrl",imageUrl);
 					
-			}
+			}else {
+	            // board.getImage()가 null인 경우에 대한 처리 추가
+	            model.addAttribute("imageUrl", ""); // 또는 다른 기본값 설정
+	        }
 		}
 		
 		return board;
