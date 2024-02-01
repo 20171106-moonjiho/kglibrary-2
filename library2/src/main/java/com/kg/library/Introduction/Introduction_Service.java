@@ -49,7 +49,7 @@ public class Introduction_Service {
 			
 		 try {
 			 	ResponseEntity<List<Map<String, Object>>> responseEntity = new RestTemplate().exchange(
-	                    "http://localhost:8087/dataStatus",
+	                    "/dataStatus",
 	                    HttpMethod.GET,
 	                    null,
 	                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
