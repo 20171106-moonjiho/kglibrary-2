@@ -41,6 +41,29 @@ package com.kg.library.culture;
     select_cate varchar2(10),
     writeDate varchar2(50)
 );
+
+마리아db 
+	CREATE TABLE culture (
+    no INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100),
+    id VARCHAR(20),
+    class_period_start VARCHAR(50),
+    class_period_end VARCHAR(50),
+    reservation_period_start VARCHAR(50),
+    reservation_period_end VARCHAR(50),
+    target VARCHAR(100),
+    event_area VARCHAR(100),
+    reception_area VARCHAR(100),
+    people VARCHAR(50),
+    money VARCHAR(50),
+    teacher VARCHAR(100),
+    contents TEXT,
+    image VARCHAR(200),
+    applicants VARCHAR(50),
+    select_cate VARCHAR(10),
+    writeDate VARCHAR(50)
+);
+
  */
 public class CultureDTO {
 	private int no;

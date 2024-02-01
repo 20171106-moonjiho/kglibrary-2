@@ -49,7 +49,7 @@
 						</tr>
 						<tr>
 							<td class="content"><c:if test="${board.image != null}">
-									<img src="../img/${board.id}/${board.image}">
+									<img src="${imageUrl }">
 									<br>
 								</c:if> ${board.content }</td>
 						</tr>

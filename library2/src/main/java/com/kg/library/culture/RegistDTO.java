@@ -32,6 +32,25 @@ apply_ck 중복체크
     contents VARCHAR2(4000),
     apply_ck varchar2(2)
 );
+
+마리아db
+
+CREATE TABLE IF NOT EXISTS regist (
+    no INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(20),
+    title VARCHAR(100),
+    name VARCHAR(20),
+    p_name VARCHAR(20),
+    tel VARCHAR(50),
+    email VARCHAR(50),
+    address VARCHAR(100),
+    es_school VARCHAR(100),
+    es_hak VARCHAR(100),
+    es_ban VARCHAR(100),
+    contents TEXT,
+    apply_ck VARCHAR(2)
+);
+
  */
 public class RegistDTO {
 	private int no;

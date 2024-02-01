@@ -9,6 +9,18 @@ content varchar(3000) not null,
 writeDate varchar2(15) not null,
 hits varchar2(255),
 image varchar2(255));
+
+마리아db
+CREATE TABLE IF NOT EXISTS notice (
+    no INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    id VARCHAR(20) NOT NULL,
+    content VARCHAR(3000) NOT NULL,
+    writeDate VARCHAR(15) NOT NULL,
+    hits VARCHAR(255),
+    image VARCHAR(255)
+);
+
  */
 
 public class NoticeBoardDTO {

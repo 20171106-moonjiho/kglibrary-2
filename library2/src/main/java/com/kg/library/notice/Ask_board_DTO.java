@@ -15,6 +15,23 @@ depth number(3)
 );
 CREATE SEQUENCE ask_board_seq START  WITH 1 INCREMENT BY 1 NOMAXVALUE NOCACHE NOCYCLE;
 commit;
+
+마리아db
+
+CREATE TABLE IF NOT EXISTS ask_board (
+    no INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    id VARCHAR(20) NOT NULL,
+    content VARCHAR(3000) NOT NULL,
+    writeDate VARCHAR(15) NOT NULL,
+    hits VARCHAR(255),
+    image VARCHAR(255),
+    ref INT,
+    step INT,
+    depth INT
+);
+
+
  */
 public class Ask_board_DTO {
 	private int no;

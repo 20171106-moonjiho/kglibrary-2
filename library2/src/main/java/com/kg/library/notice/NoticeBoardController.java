@@ -71,7 +71,7 @@ public class NoticeBoardController {
 	//공지사항 내용
 	@RequestMapping("noticeboard_Content")
 	public String noticeboard_Content(String no, Model model) {
-		NoticeBoardDTO board = service.noticeboard_Content(no);
+		NoticeBoardDTO board = service.noticeboard_Content(no,model);
 		if(board == null) {
 			return "redirect:noticeboard";
 		}
