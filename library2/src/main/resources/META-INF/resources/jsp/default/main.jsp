@@ -5,7 +5,7 @@
 		<div class="search">
 				<div class="search_btn_wrap">
 					<h3>소장자료검색</h3>	
-					<form id="frm_main_search" method="get" action="bookForm">search
+					<form id="frm_main_search" method="get" action="bookForm">
 						<div class="search_bar">
 							<select name="select" id="search_item">
 								<option value="title" selected="selected">제목</option>
