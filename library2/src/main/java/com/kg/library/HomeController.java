@@ -35,8 +35,8 @@ public class HomeController {
 	public String main(Model model) {
 		notice_service.main_board(model);
 		clture_Service.main_board(model);
-		main_Service.hit_book(model);
-		main_Service.new_book(model);
+//		main_Service.hit_book(model);
+//		main_Service.new_book(model);
 		return "default/main";
 	}
 	@RequestMapping("footer")
@@ -44,10 +44,10 @@ public class HomeController {
 		return "default/footer";
 	}
 	
-	@RequestMapping("bookForm")
-	public String bookForm(String search,Model model,
-			@RequestParam(value="currentPage", required = false)String cp, String select) {
-		String path = main_Service.search(cp, model, search, select);
-		return path;
-	}
+//	@RequestMapping("bookForm")
+//	public String bookForm(String search,Model model,
+//			@RequestParam(value="currentPage", required = false)String cp, String select) {
+//		String path = main_Service.search(cp, model, search, select);
+//		return path;
+//	}
 }
