@@ -96,7 +96,7 @@
 
 									<p class="imgw">
 										<c:if test="${board.image != null}">
-											<img src="../img/${board.id}/${board.image}">
+											<img src="${imageUrl[status.index]}">
 											<br>
 										</c:if>
 										<img src="#"

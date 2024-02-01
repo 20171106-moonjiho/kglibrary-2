@@ -59,21 +59,6 @@ public class Ask_board_Service {
 
 		ArrayList<Ask_board_DTO> boards = mapper.ask_board(begin, end, search_select, search);
 
-		if (boards != null) {
-			for (Ask_board_DTO b : boards) {
-				if (b.getImage() != null) {
-					String[] names = b.getImage().split("/");
-					for (String name : names) {
-						System.out.println("name: " + name);
-					}
-					String[] fileNames = names[1].split("-", 2);
-					for (String fileName : fileNames) {
-						System.out.println("fileName: " + fileName);
-					}
-					b.setImage(names[1]);
-				}
-			}
-		}
 		int totalCount = mapper.totalCount(search_select, search); // 테이블의 행의 갯수 를 구해 오기위함
 		if (totalCount == 0) {
 			return;
@@ -278,6 +263,7 @@ public class Ask_board_Service {
 			return "redirect:ask_board";
 		}
 		Ask_board_DTO board = mapper.ask_board_Content(n);
+		String fileName = extractFileName(board.getImage());
 		String content = board.getContent().replaceAll("<br>", "\r\n");
 		board.setContent(content);
 		System.out.println("컨텐츠 = " + board.getContent());
@@ -285,6 +271,7 @@ public class Ask_board_Service {
 			return "redirect:ask_board";
 
 		model.addAttribute("board", board);
+		model.addAttribute("fileName", fileName);
 		return "notice/ask_board_Modify";
 
 	}

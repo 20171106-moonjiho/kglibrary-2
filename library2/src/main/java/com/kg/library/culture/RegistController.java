@@ -30,7 +30,7 @@ public class RegistController {
 			}
 			
 			
-			CultureDTO board = C_service.cultureContent(no);
+			CultureDTO board = C_service.cultureContent(no,model);
 			String title = board.getTitle();
 
 			String count = service.registCount(title,sessionId);
