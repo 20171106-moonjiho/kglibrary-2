@@ -53,7 +53,7 @@ public class Ask_board_Controller {
 	//공지사항 내용
 	@RequestMapping("ask_board_Content")
 	public String ask_board_Content(String no, Model model) {
-		Ask_board_DTO board = ask_service.ask_board_Content(no);
+		Ask_board_DTO board = ask_service.ask_board_Content(no,model);
 		if(board == null) {
 			return "redirect:ask_board";
 		}
