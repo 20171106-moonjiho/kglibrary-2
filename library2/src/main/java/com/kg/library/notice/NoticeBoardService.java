@@ -164,18 +164,15 @@ public class NoticeBoardService {
 		}
 		
 		NoticeBoardDTO board = mapper.noticeboard_Content(n);
-		System.out.println("사진없는 image값 : "+ board.getImage());
+		
 		if(board != null) {
 			mapper.incrementHits(n);
 			board.setHits(board.getHits()+1);
 			if(board.getImage()!=null) {
 			//s3 url 주소 얻기
 			String imageUrl = getS3ObjectUri(board.getImage());
-//			String imageUrl = "https://kglibrary.s3.ap-northeast-2.amazonaws.com/"+board.getImage();
 			System.out.println("이미지 주소: " + imageUrl);
-			System.out.println("사진이있다면? image값 : "+ board.getImage());
 			model.addAttribute("imageUrl",imageUrl);
-					
 			}
 		}
 		
@@ -183,6 +180,11 @@ public class NoticeBoardService {
 	}
 	
 	private String getS3ObjectUri(String s3Key) {
+		 if (s3Key == null || s3Key.trim().isEmpty()) {
+		        // s3Key가 null 또는 빈 문자열인 경우에 대한 예외 처리
+		        return ""; // 또는 다른 기본값 설정
+		    }
+		 
 		GetUrlRequest  getUrlRequest  = GetUrlRequest .builder()
 	            .bucket(bucketName)
 	            .key(s3Key)
