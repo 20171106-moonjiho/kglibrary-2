@@ -6,6 +6,13 @@ startDate varchar2(10),
 endDate varchar2(10),
 events varchar2(100));
 
+마리아db
+CREATE TABLE IF NOT EXISTS noticeboard_cal (
+    startDate DATE,
+    endDate DATE,
+    events VARCHAR(100)
+);
+
  */
 
 public class productionDTO {

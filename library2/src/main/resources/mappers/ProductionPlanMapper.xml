@@ -20,7 +20,5 @@
 	<insert id="noticeboard_cal">
 		INSERT INTO noticeboard_cal VALUES(#{startDate}, #{endDate}, #{events})
 	</insert>
-
 </mapper>
-
  -->

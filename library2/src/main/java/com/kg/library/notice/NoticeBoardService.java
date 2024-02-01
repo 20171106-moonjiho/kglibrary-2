@@ -2,6 +2,9 @@ package com.kg.library.notice;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +18,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.kg.library.PageService;
 
 import jakarta.servlet.http.HttpSession;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 public class NoticeBoardService {
@@ -22,7 +30,13 @@ public class NoticeBoardService {
 	private NoticeBoardMapper mapper;
 	@Autowired
 	private HttpSession session;
-	private String filePath = "C:\\Users\\user1\\git\\kglibrary\\library\\src\\main\\resources\\static\\img\\";
+	
+	//s3에 이미지 추가
+	private String bucketName = "kglibrary"; // S3 버킷 이름
+    private String s3FilePath = "static/img/"; // S3에 업로드할 경로
+
+	 @Autowired
+	 private S3Client s3Client; // AWS S3 클라이언트 주입
 	
 
 	public void noticeBoard(String search_select, String search, String cp, Model model) {
@@ -44,21 +58,6 @@ public class NoticeBoardService {
 		
 		ArrayList<NoticeBoardDTO> boards = mapper.noticeBoard(begin,end,search_select,search);
 		
-		if(boards != null) {
-			for(NoticeBoardDTO b : boards) {
-				if(b.getImage()!=null) {
-					String[] names= b.getImage().split("/");
-					for(String name : names) {
-					System.out.println("name: " +name);
-					}
-					String[] fileNames = names[1].split("-",2);
-					for(String fileName : fileNames) {
-						System.out.println("fileName: " +fileName);
-						}
-					b.setImage(names[1]);
-					}
-			}
-		}
 		int totalCount = mapper.totalCount(search_select, search); // 테이블의 행의 갯수 를 구해 오기위함
 		if (totalCount == 0) {
 			return;
@@ -112,31 +111,51 @@ public class NoticeBoardService {
 		}
 
 		// 파일의 저장 경로
-		String fileSaveDirectory = filePath + sessionId;
-		File f = new File(fileSaveDirectory);// 파일 객체 생성 으로 sessionId위치에 폴더가 있는지 없는지 확인 하기
-		if (f.exists() == false) {
-			// 저장경로가 없을 경우
-			// f.mkdir();
-			f.mkdirs();// 자동으로 만들어 줄 수 있게 한다.
-		}
-		// \\(역슬러시)를 /(슬러시로)
+//		String fileSaveDirectory = sessionId;
+		
+		String fileSaveDirectory = "kglibrary/" + sessionId;  // S3 버킷 경로
 		String fullPath = fileSaveDirectory + "/" + fileTime + fileName;
-		board.setImage(fullPath);
-		f = new File(fullPath); // 파일 객체에 저장경로에 대한 정보 넣어주기.
-		try {
-			file.transferTo(f);// 파일 저장.
-		} catch (IOException e) {
-			e.printStackTrace();
-			board.setImage("");// 예외가 발생하면 빈문자열을 넣어줄때.
-		}
-	}
+		 // 파일명만 추출
+	    String uploadedFileName = extractFileName(fullPath);
+		// AWS S3에 업로드할 경로 설정
+        String s3Key = s3FilePath + sessionId + "/" + fileTime + fileName;
+		
+
+        // 파일 업로드를 위한 코드
+        try (InputStream fileInputStream = file.getInputStream()) {
+            // S3에 업로드할 파일의 크기
+            long fileSize = file.getSize();
+
+            // S3에 업로드할 객체 생성
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(s3Key)
+                    .build();
+
+            // S3에 파일 업로드
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(fileInputStream, fileSize));
+            board.setImage(s3Key);
+        }catch (IOException e) {
+            e.printStackTrace();
+            board.setImage("");
+        }
+    }
 	
 	mapper.noticeboard_writeProc(board);
 	return "redirect:noticeBoard";
 	}
+	
+	// 파일 경로에서 파일명만 추출하는 메서드
+		private String extractFileName(String filePath) {
+		    Path path = Paths.get(filePath);
+		    if (path.getNameCount() > 0) {
+		        return path.getFileName().toString();
+		    } else {
+		        return filePath;
+		    }
+		}
 
-
-	public NoticeBoardDTO noticeboard_Content(String no) {
+	public NoticeBoardDTO noticeboard_Content(String no, Model model) {
 		int n = 1;
 		try {
 			n = Integer.parseInt(no);
@@ -150,21 +169,26 @@ public class NoticeBoardService {
 			mapper.incrementHits(n);
 			board.setHits(board.getHits()+1);
 			if(board.getImage()!=null) {
-			String[] names=board.getImage().split("/");
-			for(String name : names) {
-			System.out.println("컨텐츠 name: " +name);
-			}
-			String[] fileNames = names[1].split("-",2);
-			for(String fileName : fileNames) {
-				System.out.println("fileName: " +fileName);
-				}
-			board.setImage(names[1]);
+			//s3 url 주소 얻기
+			String imageUrl = getS3ObjectUri(board.getImage());
+//			String imageUrl = "https://kglibrary.s3.ap-northeast-2.amazonaws.com/"+board.getImage();
+			System.out.println("이미지 주소: " + imageUrl);
+			model.addAttribute("imageUrl",imageUrl);
+					
 			}
 		}
 		
 		return board;
 	}
+	
+	private String getS3ObjectUri(String s3Key) {
+		GetUrlRequest  getUrlRequest  = GetUrlRequest .builder()
+	            .bucket(bucketName)
+	            .key(s3Key)
+	            .build();
 
+	    return s3Client.utilities().getUrl(getUrlRequest ).toExternalForm();
+	}
 
 	public String ContentDeleteProc3(String no) {
 		int n = 0;
@@ -181,14 +205,18 @@ public class NoticeBoardService {
 		String sessionId = (String)session.getAttribute("id");
 		if(board.getId().equals(sessionId) == false)
 			return "작성자만 삭제 할 수 있습니다.";
-		
+				
 		String fullPath = board.getImage();
-		if(fullPath != null) { // 테이블에 파일의 경로와 이름이 있다면
-			File f = new File(fullPath);
-			if(f.exists() == true) // 파일 저장소에 파일이 존재한다면
-				f.delete();
-		}
-		
+		if (fullPath != null) {
+	        // S3에서 객체 삭제
+	        String s3Key = s3FilePath + sessionId + "/" + extractFileName(fullPath);
+	        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+	                .bucket(bucketName)
+	                .key(s3Key)
+	                .build();
+	        s3Client.deleteObject(deleteObjectRequest);
+	    }
+
 		// 테이블에서 게시글번호와 일치하는 행(row)삭제
 		mapper.ContentDeleteProc3(n);
 		return "게시글 삭제 완료";
@@ -203,25 +231,15 @@ public class NoticeBoardService {
 			return "redirect:noticeBoard";
 		}
 		NoticeBoardDTO board = mapper.noticeboard_Content(n);
+		String fileName = extractFileName(board.getImage());
 		String content = board.getContent().replaceAll("<br>", "\r\n");
 		board.setContent(content);
 		System.out.println("컨텐츠 = " + board.getContent());
 		if(board == null)
 			return "redirect:noticeBoard";
 		
-		if(board.getImage() != null) {
-			String[] names = board.getImage().split("\\\\");
-			for(String name : names) {
-				System.out.println("게시글 수정 name: " +name);
-				}
-			String[] fileNames = names[11].split("-", 2);
-			for(String fileName : fileNames) {
-				System.out.println("게시글 수정 fileName: " +fileName);
-				}
-			board.setImage(fileNames[1]);
-		}
-
 		model.addAttribute("board",board);
+		model.addAttribute("fileName", fileName);
 		return "notice/noticeboard_Modify";
 		
 	}
@@ -266,28 +284,35 @@ public class NoticeBoardService {
 			}
 
 			// 파일의 저장 경로
-			String fileSaveDirectory = filePath + sessionId;
-			File f = new File(fileSaveDirectory);// 파일 객체 생성 으로 sessionId위치에 폴더가 있는지 없는지 확인 하기
-			if (f.exists() == false) {
-				// 저장경로가 없을 경우
-				// f.mkdir();
-				f.mkdirs();// 자동으로 만들어 줄 수 있게 한다.
-			}
-			// \\(역슬러시)를 /(슬러시로)
+			String fileSaveDirectory = "kglibrary/" + sessionId;  // S3 버킷 경로
 			String fullPath = fileSaveDirectory + "/" + fileTime + fileName;
-			board.setImage(fullPath);
-			f = new File(fullPath); // 파일 객체에 저장경로에 대한 정보 넣어주기.
-			try {
-				file.transferTo(f);// 파일 저장.
-			} catch (IOException e) {
-				e.printStackTrace();
-				board.setImage("");// 예외가 발생하면 빈문자열을 넣어줄때.
-			}
+			// AWS S3에 업로드할 경로 설정
+		    String s3Key = s3FilePath + sessionId + "/" + fileTime + fileName;
+		    
+		    // 파일 업로드를 위한 코드
+	        try (InputStream fileInputStream = file.getInputStream()) {
+	            // S3에 업로드할 파일의 크기
+	            long fileSize = file.getSize();
+
+	            // S3에 업로드할 객체 생성
+	            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+	                    .bucket(bucketName)
+	                    .key(s3Key)
+	                    .build();
+
+	            // S3에 파일 업로드
+	            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(fileInputStream, fileSize));
+	            board.setImage(s3Key);
+	        }catch (IOException e) {
+	            e.printStackTrace();
+	            board.setImage("");
+	        }
 		}
 		
 		if(board.getImage()==null) {
 			board.setImage("");
 		}
+		
 		int result = mapper.noticeboard_ModifyProc(board);
 		if(result == 0)
 			return "게시글 수정에 실패했습니다. 다시 시도하세요.";
