@@ -55,18 +55,18 @@
 				<div class="menu_area active">
 					<div class="gnb_bg" style="display: none;"></div>
 				<ul>
-					<li><a href="bookForm">자료검색</a>
+					<li><a href="book/bookForm">자료검색</a>
 						<div class="two_depth">
 								<p class="bmenu_tit">도서자료검색</p>
 								<ul>	
-									<li><a href="bookForm" >도서자료검색
+									<li><a href="book/bookForm" >도서자료검색
 									</a></li>
-									<li><a href="bookHopeForm" >비치 희망 도서
+									<li><a href="book/bookHopeForm" >비치 희망 도서
 									</a></li>
 									<c:choose>
 										<c:when test="${sessionScope.id eq 'admin'}">
 									
-											<li><a href="apiBookRegist" >API 등록
+											<li><a href="book/apiBookRegist" >API 등록
 											</a></li>
 										</c:when> 
 									</c:choose>	
@@ -124,15 +124,15 @@
 						</div>
 					</li>
 					 
-					<li><a href="donateguide">도서 기증</a>
+					<li><a href="book/donateguide">도서 기증</a>
 						<div class="two_depth">
 								<p class="bmenu_tit">자료검색</p>
 								<ul>	
-									<li><a href="donateguide" >기증 안내
+									<li><a href="book/donateguide" >기증 안내
 									</a></li>
-									<li><a href="donateWrite" >기증 신청
+									<li><a href="book/donateWrite" >기증 신청
 									</a></li>
-									<li><a href="donateForm" >기증 목록
+									<li><a href="book/donateForm" >기증 목록
 									</a></li>									
 								</ul>
 						</div>
