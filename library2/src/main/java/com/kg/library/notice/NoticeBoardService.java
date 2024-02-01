@@ -1,6 +1,5 @@
 package com.kg.library.notice;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -23,6 +22,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
 public class NoticeBoardService {
@@ -208,13 +208,18 @@ public class NoticeBoardService {
 				
 		String fullPath = board.getImage();
 		if (fullPath != null) {
-	        // S3에서 객체 삭제
-	        String s3Key = s3FilePath + sessionId + "/" + extractFileName(fullPath);
-	        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-	                .bucket(bucketName)
-	                .key(s3Key)
-	                .build();
-	        s3Client.deleteObject(deleteObjectRequest);
+			try {
+			    // S3에서 객체 삭제
+			    String s3Key = s3FilePath + sessionId + "/" + extractFileName(fullPath);
+			    DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+			            .bucket(bucketName)
+			            .key(s3Key)
+			            .build();
+			    s3Client.deleteObject(deleteObjectRequest);
+			} catch (S3Exception e) {
+			    e.printStackTrace();
+			    // 예외 발생 시 사용자에게 메시지 전달 또는 로깅 등 추가 처리가 필요합니다.
+			}
 	    }
 
 		// 테이블에서 게시글번호와 일치하는 행(row)삭제
