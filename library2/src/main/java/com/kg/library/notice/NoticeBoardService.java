@@ -164,7 +164,7 @@ public class NoticeBoardService {
 		}
 		
 		NoticeBoardDTO board = mapper.noticeboard_Content(n);
-		
+		System.out.println("사진없는 image값 : "+ board.getImage());
 		if(board != null) {
 			mapper.incrementHits(n);
 			board.setHits(board.getHits()+1);
@@ -173,12 +173,10 @@ public class NoticeBoardService {
 			String imageUrl = getS3ObjectUri(board.getImage());
 //			String imageUrl = "https://kglibrary.s3.ap-northeast-2.amazonaws.com/"+board.getImage();
 			System.out.println("이미지 주소: " + imageUrl);
+			System.out.println("사진이있다면? image값 : "+ board.getImage());
 			model.addAttribute("imageUrl",imageUrl);
 					
-			}else {
-	            // board.getImage()가 null인 경우에 대한 처리 추가
-	            model.addAttribute("imageUrl", ""); // 또는 다른 기본값 설정
-	        }
+			}
 		}
 		
 		return board;
