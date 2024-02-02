@@ -69,7 +69,7 @@ public class MainService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			
-			ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
+			ResponseEntity<ArrayList<BookDTO>> responseEntity = restTemplate.exchange(
 					"https://www.bowfun.link/book/new_Book", HttpMethod.GET, new HttpEntity<>(headers), 
 					new ParameterizedTypeReference<ArrayList<BookDTO>>() {
 					});
