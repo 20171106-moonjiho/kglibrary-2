@@ -316,7 +316,7 @@ public class MemberService {
 
 	public void myBook(Model model, String id) { // ID 보낼 때
 
-		System.out.println("mybook 보내고 있나");
+		System.out.println("mybook service 보내고 있나1");
 		// RestTemplate 생성
 		RestTemplate restTemplate = new RestTemplate();
 
