@@ -35,8 +35,8 @@ public class HomeController {
 	public String main(Model model) {
 		notice_service.main_board(model);
 		clture_Service.main_board(model);
-//		main_Service.hit_book(model);
-//		main_Service.new_book(model);
+		main_Service.hit_book(model);
+		main_Service.new_book(model);
 		return "default/main";
 	}
 	@RequestMapping("footer")
