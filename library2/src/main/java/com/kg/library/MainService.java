@@ -24,7 +24,7 @@ public class MainService {
 
 		try {
 			ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
-					"http://www.bowfun.link/book/hit_book", HttpMethod.GET, null,
+					"/book/hit_book", HttpMethod.GET, null,
 					new ParameterizedTypeReference<ArrayList<BookDTO>>() {
 					});
 
@@ -56,7 +56,7 @@ public class MainService {
 
 		try {
 			ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
-					"http://www.bowfun.link/book/new_Book", HttpMethod.GET, null,
+					"/book/new_Book", HttpMethod.GET, null,
 					new ParameterizedTypeReference<ArrayList<BookDTO>>() {
 					});
 
@@ -98,7 +98,7 @@ public class MainService {
 		
 		try {
 			ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
-					"http://www.bowfun.link/book/search", HttpMethod.GET, null,
+					"/book/search", HttpMethod.GET, null,
 					new ParameterizedTypeReference<ArrayList<BookDTO>>() {
 					});
 
