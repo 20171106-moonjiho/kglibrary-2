@@ -133,10 +133,10 @@
 					 <div class="tab-cont">
 						<div class="t-cont1">
 							 <ul>
-							 <c:forEach var="hitbook" items="${hitbooks}" >
+							 <c:forEach var="hitbook" items="${hitbooks}" varStatus="loop" >
 							 	 <li>
-							 	 <a href="http://localhost:8087/bookContent?no=${hitbook.no }">
-							 	<img src="../img/admin/${hitbook.image}" alt="">
+							 	 <a href="book/bookContent?no=${hitbook.no }">
+							 	 <img src="${imageUrls[loop.index - 1]}" alt="">
 								  <div class="overrap">
 								  	<span class="btit">${hitbook.title_info}</span>
 									<span class="name">${hitbook.author_info}</span>
@@ -149,13 +149,12 @@
 						</div>
 						<div class="t-cont1">
 							 <ul>
-							 <c:forEach var="newbook" items="${newBooks}" >
+							 <c:forEach var="newbook" items="${newBooks}" varStatus="loop" >
 							 	 <li>
-							 	 <a href="http://localhost:8087/bookContent?no=${newbook.no }">
+							 	 <a href="book/bookContent?no=${newbook.no }">
 							 	 <c:choose>
-									<c:when
-										test="${not empty newbook.image && newbook.category ne 'API'}">
-										<img src="../img/admin/${newbook.image}" alt="">
+									<c:when test="${not empty newbook.image && newbook.category ne 'API'}">
+										<img src="${imageUrls[loop.index - 1]}" alt="">
 										<br>
 									</c:when>
 									<c:otherwise>

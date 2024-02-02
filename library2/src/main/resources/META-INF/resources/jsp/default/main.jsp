@@ -149,7 +149,7 @@
 						</div>
 						<div class="t-cont1">
 							 <ul>
-							 <c:forEach var="newbook" items="${newBooks}" >
+							 <c:forEach var="newbook" items="${newBooks}" varStatus="loop" >
 							 	 <li>
 							 	 <a href="book/bookContent?no=${newbook.no }">
 							 	 <c:choose>
