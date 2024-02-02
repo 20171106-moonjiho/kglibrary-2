@@ -123,7 +123,7 @@ $(document).on(
 		}
 	});
 
-get_cal("2024", "1");
+get_cal("2024", "2");
 get_time();
 
 function f_submit() {
