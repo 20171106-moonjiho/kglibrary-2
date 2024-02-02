@@ -136,7 +136,7 @@
 							 <c:forEach var="hitbook" items="${hitbooks}" varStatus="loop" >
 							 	 <li>
 							 	 <a href="book/bookContent?no=${hitbook.no }">
-							 	 <img src="${imageUrls[loop.index - 1]}" alt="">
+							 	 <img src="${imageUrls[loop.index]}" alt="">
 								  <div class="overrap">
 								  	<span class="btit">${hitbook.title_info}</span>
 									<span class="name">${hitbook.author_info}</span>
@@ -154,7 +154,7 @@
 							 	 <a href="book/bookContent?no=${newbook.no }">
 							 	 <c:choose>
 									<c:when test="${not empty newbook.image && newbook.category ne 'API'}">
-										<img src="${imageUrls[loop.index - 1]}" alt="">
+										<img src="${imageUrls[loop.index]}" alt="">
 										<br>
 									</c:when>
 									<c:otherwise>
