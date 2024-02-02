@@ -24,7 +24,7 @@ public class MainService {
 
 		try {
 			ResponseEntity<ArrayList<BookDTO>> responseEntity = new RestTemplate().exchange(
-					"http://www.bowfun.link/book/hit_book", HttpMethod.GET, null,
+					"/hit_book", HttpMethod.GET, null,
 					new ParameterizedTypeReference<ArrayList<BookDTO>>() {
 					});
 
