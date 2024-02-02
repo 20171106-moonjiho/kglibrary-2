@@ -128,7 +128,7 @@
 												4. 업로드할 사진의 파일은 <span style="color: lightcoral">jpg, jpeg, png만</span> 가능합니다.
 											</p>
 											<br>
-											<input type="file" name="upfile">${board.image }<br>
+											<input type="file" name="upfile">${fileName }<br>
 											</td>
 										</tr>
 									</tbody>

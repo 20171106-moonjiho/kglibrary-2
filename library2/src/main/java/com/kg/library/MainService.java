@@ -47,6 +47,7 @@ public class MainService {
 	public void hit_book(Model model) {
 
 		try {
+
 			RestTemplate restTemplate = new RestTemplate();
 
 			HttpHeaders headers = new HttpHeaders();

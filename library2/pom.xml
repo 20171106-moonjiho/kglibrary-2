@@ -122,7 +122,7 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.13</version> <!-- 최신 버전으로 변경 가능 -->
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>

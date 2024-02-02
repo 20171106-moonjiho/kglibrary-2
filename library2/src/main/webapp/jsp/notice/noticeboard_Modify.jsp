@@ -70,7 +70,7 @@
 										반드시 영문으로 등록해주세요.<br> 3. 사진에 상세 입력사항을 넣거나 타사이트 주소를 게시할 경우
 										등록글은 삭제됩니다.<br> 4. 업로드할 사진의 파일은 <span
 											style="color: lightcoral">jpg, jpeg, png만</span> 가능합니다.
-									</p> <br> <input type="file" name="upfile">${board.image }<br>
+									</p> <br> <input type="file" name="upfile">${fileName }<br>
 								</td>
 							</tr>
 							<!-- 개인정보수집동의 항목 -->
