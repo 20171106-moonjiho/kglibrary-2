@@ -201,7 +201,7 @@ public class MemberService {
 	    RestTemplate restTemplate = new RestTemplate();
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "localhost:8085/requestMyReservation";
+	    String apiUrl = "/book/requestMyReservation";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
