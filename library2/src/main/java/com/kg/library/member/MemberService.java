@@ -189,7 +189,7 @@ public class MemberService {
 		return "아이디 또는 비밀번호를 확인 후 입력하세요";
 	}
 	
-	public ResponseEntity<List<ReservationDTO>> myReservation(String sessionId) {
+	public ResponseEntity<List<ReservationDTO>> myReservation(String sessionId,Model model) {
 	    // RestTemplate 생성
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
@@ -220,7 +220,8 @@ public class MemberService {
 	            // JSON 문자열을 List<ReservationDTO>로 변환
 	            List<ReservationDTO> reservationDTOList = objectMapper.readValue(responseBody, new TypeReference<List<ReservationDTO>>() {
 	            });
-
+	            
+				model.addAttribute("reservations", reservationDTOList);
 	            return ResponseEntity.ok(reservationDTOList);
 
 	        } catch (IOException e) {
