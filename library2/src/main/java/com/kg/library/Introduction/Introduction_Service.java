@@ -63,8 +63,12 @@ public class Introduction_Service {
 	                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
 	            );
 
-		 	  List<Map<String, Object>> dataStatus = responseEntity.getBody();
+		 	 List<Map<String, Object>> dataStatus = responseEntity.getBody();
 		 	 System.out.println("dataStatus 요청 보냄");
+		 	 
+		 	 for(Map<String, Object> b : dataStatus) {
+		 		 System.out.println("data 정보 받는 부분: "+ dataStatus);
+		 	 }
 			 	 return dataStatus;
 	            
 	        } catch (HttpClientErrorException.NotFound notFoundException) {
