@@ -41,14 +41,14 @@
 	<tbody>
 	 	<c:forEach var="data" items="${dataStatus}" varStatus="loop">
 		<tr>
-			<th scope="row">${data['CATEGORY']}</th>
-			<td>${data['BOOKCOUNT']}</td>
+			<th scope="row">${data['category']}</th>
+			<td>${data['bookCount']}</td>
 		</tr>
 		<tr>
 		<c:if test="${loop.last}">
         <tr>
             <th scope="row">전체통계</th>
-            <td>${data['TOTALBOOKCOUNT']}</td>
+            <td>${data['totalBookCount']}</td>
         </tr>
     	</c:if>
 		</c:forEach>
