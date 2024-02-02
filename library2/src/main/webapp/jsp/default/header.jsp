@@ -118,7 +118,7 @@
 						<div class="two_depth">
 								<p class="bmenu_tit">자료검색</p>
 								<ul>	
-									<li><a href="reservation" >회의실 예약
+									<li><a href="reservation/reservation" >회의실 예약
 									</a></li>
 								</ul>
 						</div>
