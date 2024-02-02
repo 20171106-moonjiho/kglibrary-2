@@ -378,11 +378,11 @@ public class CultureService {
 	public void main_board(Model model) {
 		ArrayList<CultureDTO> cultures = mapper.main_board();
 		
-		for(CultureDTO b : cultures) {
-			System.out.println("여기--------------------------"+b.getSelect_cate());
-			System.out.println("여기--------------------------"+b.getTitle());
-			System.out.println("여기--------------------------"+b.getWriteDate());
-		}
+//		for(CultureDTO b : cultures) {
+//			System.out.println("여기--------------------------"+b.getSelect_cate());
+//			System.out.println("여기--------------------------"+b.getTitle());
+//			System.out.println("여기--------------------------"+b.getWriteDate());
+//		}
 		model.addAttribute("cultures",cultures);
 	}
 
