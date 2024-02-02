@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -13,7 +16,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.kg.library.Introduction.BookDTO;
-import com.kg.library.Introduction.BookService;
 
 @Service
 public class MainService {
@@ -25,14 +27,14 @@ public class MainService {
 		try {
 
 			RestTemplate restTemplate = new RestTemplate();
-		//	restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-			 
-			 ResponseEntity<ArrayList<BookDTO>> responseEntity = restTemplate.exchange(
-		                "http://www.bowfun.link/book/hit_book", HttpMethod.GET, null,
-		                new ParameterizedTypeReference<ArrayList<BookDTO>>() {
-		                });
-
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			
+			ResponseEntity<ArrayList<BookDTO>> responseEntity = restTemplate.exchange(
+			        "https://www.bowfun.link/book/hit_book", HttpMethod.GET, new HttpEntity<>(headers), 
+			        new ParameterizedTypeReference<ArrayList<BookDTO>>() {
+			        });
 
 			ArrayList<BookDTO> hitbooks = responseEntity.getBody();
 			System.out.println("hit_book 요청 보냄");
