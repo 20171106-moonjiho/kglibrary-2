@@ -195,7 +195,7 @@ public class MemberService {
 	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "https://www.bowfun.link/requestMyReservation";
+	    String apiUrl = "https://www.bowfun.link/reservation/requestMyReservation";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
@@ -238,7 +238,7 @@ public class MemberService {
 	    RestTemplate restTemplate = new RestTemplate();
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "https://www.bowfun.link/requestCancel";
+	    String apiUrl = "https://www.bowfun.link/reservation/requestCancel";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
@@ -276,7 +276,7 @@ public class MemberService {
 	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "https://www.bowfun.link/requestPreReservation";
+	    String apiUrl = "https://www.bowfun.link/reservation/requestPreReservation";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
