@@ -56,7 +56,7 @@ public class Introduction_Service {
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				
-			 	ResponseEntity<List<Map<String, Object>>> responseEntity = new RestTemplate().exchange(
+			 	ResponseEntity<List<Map<String, Object>>> responseEntity = restTemplate.exchange(
 	                    "https://www.bowfun.link/book/dataStatus",
 	                    HttpMethod.GET,
 	                    new HttpEntity<>(headers),
