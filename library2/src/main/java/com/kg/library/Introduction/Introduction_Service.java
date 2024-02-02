@@ -8,7 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -48,10 +51,15 @@ public class Introduction_Service {
 	 public List<Map<String, Object>> dataStatus(BookDTO board) {
 			
 		 try {
+			 RestTemplate restTemplate = new RestTemplate();
+
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				
 			 	ResponseEntity<List<Map<String, Object>>> responseEntity = new RestTemplate().exchange(
-	                    "/book/dataStatus",
+	                    "https://www.bowfun.link/book/dataStatus",
 	                    HttpMethod.GET,
-	                    null,
+	                    new HttpEntity<>(headers),
 	                    new ParameterizedTypeReference<List<Map<String, Object>>>() {}
 	            );
 
