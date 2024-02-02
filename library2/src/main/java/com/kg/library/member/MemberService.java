@@ -11,13 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kg.library.Introduction.BookDTO;
@@ -185,30 +188,71 @@ public class MemberService {
 
 		return "아이디 또는 비밀번호를 확인 후 입력하세요";
 	}
-
-//	public List<ReservationDTO> myReservation(String sessionId) {
-//		LocalDate date = LocalDate.now();
-//		List<ReservationDTO> now = new ArrayList<>();
-//		List<ReservationDTO> list = mapper2.getReservations4(sessionId);
-//		for(ReservationDTO reservation: list) {
-//			if(!date.isAfter(LocalDate.parse(reservation.getReservation_date()))) now.add(reservation);
-//		}
-//		return now;
-//	}
 	
-	public List<ReservationDTO> myReservation(String sessionId, Model model) {
+	public ResponseEntity<List<ReservationDTO>> myReservation(String sessionId) {
 	    // RestTemplate 생성
 	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "http://www.bowfun.link/book/requestMyReservation";
+	    String apiUrl = "http://www.bowfun.link/requestMyReservation";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.setContentType(MediaType.APPLICATION_JSON);
 
 	    // JSON 데이터 설정
-	    String jsonBody = "{\"id\": \"" + sessionId + "\"}";
+	    String jsonBody = "{\"sessionId\": \"" + sessionId + "\"}";
+
+	    // 요청 엔터티 생성
+	    HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
+
+	    // POST 요청 보내기
+	    ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+	    // 응답 확인
+	    if (responseEntity.getStatusCode().is2xxSuccessful()) {
+	        String responseBody = responseEntity.getBody();
+
+	        try {
+	            ObjectMapper objectMapper = new ObjectMapper();
+
+	            // JSON 문자열을 List<ReservationDTO>로 변환
+	            List<ReservationDTO> reservationDTOList = objectMapper.readValue(responseBody, new TypeReference<List<ReservationDTO>>() {
+	            });
+
+	            return ResponseEntity.ok(reservationDTOList);
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	        }
+	    } else {
+	        System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+	        return ResponseEntity.status(responseEntity.getStatusCode()).build();
+	    }
+	}
+
+	public void cancel(ReservationDTO dto) {
+		// RestTemplate 생성
+	    RestTemplate restTemplate = new RestTemplate();
+
+	    // 서버에게 ID를 전송하는 URL
+	    String apiUrl = "http://www.bowfun.link/requestCancel";
+
+	    // POST 요청을 위한 헤더 및 본문 설정
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON); // Json 데이터, @RequestBody으로 받을 수 있음.
+
+	    // DTO를 JSON으로 변환
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    String jsonBody;
+	    try {
+	        jsonBody = objectMapper.writeValueAsString(dto);
+	    } catch (JsonProcessingException e) {
+	        e.printStackTrace();
+	        return; // 예외 처리 필요
+	    }
 
 	    // 요청 엔터티 생성
 	    HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
@@ -221,6 +265,36 @@ public class MemberService {
 	        String responseBody = responseEntity.getBody();
 	        System.out.println("Response body: " + responseBody);
 
+	    } else {
+	        System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+	    }
+	}
+	
+	public ResponseEntity<List<ReservationDTO>> preReservation(String sessionId) {
+		// RestTemplate 생성
+	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
+
+	    // 서버에게 ID를 전송하는 URL
+	    String apiUrl = "http://www.bowfun.link/requestPreReservation";
+
+	    // POST 요청을 위한 헤더 및 본문 설정
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON);
+
+	    // JSON 데이터 설정
+	    String jsonBody = "{\"sessionId\": \"" + sessionId + "\"}";
+
+	    // 요청 엔터티 생성
+	    HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
+
+	    // POST 요청 보내기
+	    ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+	    // 응답 확인
+	    if (responseEntity.getStatusCode().is2xxSuccessful()) {
+	        String responseBody = responseEntity.getBody();
+
 	        try {
 	            ObjectMapper objectMapper = new ObjectMapper();
 
@@ -228,42 +302,17 @@ public class MemberService {
 	            List<ReservationDTO> reservationDTOList = objectMapper.readValue(responseBody, new TypeReference<List<ReservationDTO>>() {
 	            });
 
-	            // 변환된 객체 리스트를 사용
-	            for (ReservationDTO reservationDTO : reservationDTOList) {
-	                System.out.println("rn: " + reservationDTO.getRoom_num() + ", member: " + reservationDTO.getMember());
-	            }
-
-	            // 모델에 reservationDTO 리스트 추가
-	            model.addAttribute("reservations", reservationDTOList);
-
-	            return reservationDTOList; // 메서드의 반환 값 추가
+	            return ResponseEntity.ok(reservationDTOList);
 
 	        } catch (IOException e) {
 	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	        }
 	    } else {
 	        System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+	        return ResponseEntity.status(responseEntity.getStatusCode()).build();
 	    }
-
-	    return null; // 예외 상황에 빈 리스트 반환 또는 다른 적절한 반환 값
 	}
-
-//
-//
-//	public void cancel(ReservationDTO dto) {
-//		mapper2.cancel(dto);
-//	}
-//
-//
-//	public List<ReservationDTO> preReservation(String sessionId) {
-//		LocalDate date = LocalDate.now();
-//		List<ReservationDTO> pre = new ArrayList<>();
-//		List<ReservationDTO> list = mapper2.getReservations4(sessionId);
-//		for(ReservationDTO reservation: list) {
-//			if(date.isAfter(LocalDate.parse(reservation.getReservation_date()))) pre.add(reservation);
-//		}
-//		return pre;
-//	}
 
 	public void myBook(Model model, String id) { // ID 보낼 때
 

@@ -1,5 +1,6 @@
 package com.kg.library.member;
 
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.kg.library.Introduction.ReservationDTO;
 
 //import com.kg.library.reservation.ReservationDTO;
 
@@ -184,34 +187,56 @@ public class MemberController {
 		return "member/terms";
 	}
     
-//    @RequestMapping("myReservation")
-//    public String myReservation(Model model) {
-//    	model.addAttribute("menu","myReservation");
-//    	String sessionId = (String)session.getAttribute("id");
-//		if(sessionId == null)
-//			return "redirect:login";
-//		model.addAttribute("reservations",service.myReservation(sessionId));
-//    	return "member/myReservation";
-//    }
+    @RequestMapping("myReservation")
+    public String myReservation(Model model) {
+        model.addAttribute("menu", "myReservation");
+        String sessionId = (String) session.getAttribute("id");
+        if (sessionId == null)
+            return "redirect:login";
+
+	    System.out.println("my1");
+
+        ResponseEntity<List<ReservationDTO>> responseEntity = service.myReservation(sessionId);
+
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            List<ReservationDTO> reservationDTOList = responseEntity.getBody();
+            model.addAttribute("reservations", reservationDTOList);
+            return "member/myReservation";
+        } else {
+            System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+            // 에러 페이지로 리다이렉트 또는 적절한 에러 처리 로직 추가
+            return "error";
+        }
+    }
     
-//    @RequestMapping("cancel")
-//    public String cancel(ReservationDTO dto) {
-//    	String sessionId = (String)session.getAttribute("id");
-//		if(sessionId == null)
-//			return "redirect:login";
-//		service.cancel(dto);
-//    	return "redirect:myReservation";
-//    }
+    @RequestMapping("cancel")
+    public String cancel(ReservationDTO dto) {
+    	String sessionId = (String)session.getAttribute("id");
+		if(sessionId == null)
+			return "redirect:login";
+		service.cancel(dto);
+    	return "redirect:myReservation";
+    }
     
-//    @RequestMapping("preReservation")
-//    public String preReservation(Model model) {
-//    	model.addAttribute("menu","preReservation");
-//    	String sessionId = (String)session.getAttribute("id");
-//		if(sessionId == null)
-//			return "redirect:login";
-//		model.addAttribute("reservations",service.preReservation(sessionId));
-//    	return "member/preReservation";
-//    }
+    @RequestMapping("preReservation")
+    public String preReservation(Model model) {
+    	model.addAttribute("menu", "preReservation");
+        String sessionId = (String) session.getAttribute("id");
+        if (sessionId == null)
+            return "redirect:login";
+
+        ResponseEntity<List<ReservationDTO>> responseEntity = service.preReservation(sessionId);
+
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            List<ReservationDTO> reservationDTOList = responseEntity.getBody();
+            model.addAttribute("reservations", reservationDTOList);
+            return "member/preReservation";
+        } else {
+            System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+            // 에러 페이지로 리다이렉트 또는 적절한 에러 처리 로직 추가
+            return "error";
+        }
+    }
     
     @RequestMapping("myBook")
     public String myBook(Model model) {
