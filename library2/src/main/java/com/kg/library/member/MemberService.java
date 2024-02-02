@@ -1,41 +1,27 @@
 package com.kg.library.member;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kg.library.Introduction.BookDTO;
-
-import edu.emory.mathcs.backport.java.util.Collections;
-
-//import com.kg.library.book.BookDTO;
-//import com.kg.library.book.IBookMapper;
-//import com.kg.library.reservation.ReservationDTO;
-//import com.kg.library.reservation.ReservationMapper;
+import com.kg.library.Introduction.ReservationDTO;
 
 import jakarta.servlet.http.HttpSession;
 import net.nurigo.java_sdk.api.Message;
@@ -209,6 +195,59 @@ public class MemberService {
 //		}
 //		return now;
 //	}
+	
+	public List<ReservationDTO> myReservation(String sessionId, Model model) {
+	    // RestTemplate 생성
+	    RestTemplate restTemplate = new RestTemplate();
+
+	    // 서버에게 ID를 전송하는 URL
+	    String apiUrl = "http://www.bowfun.link/book/requestMyReservation";
+
+	    // POST 요청을 위한 헤더 및 본문 설정
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON);
+
+	    // JSON 데이터 설정
+	    String jsonBody = "{\"id\": \"" + sessionId + "\"}";
+
+	    // 요청 엔터티 생성
+	    HttpEntity<String> requestEntity = new HttpEntity<>(jsonBody, headers);
+
+	    // POST 요청 보내기
+	    ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+
+	    // 응답 확인
+	    if (responseEntity.getStatusCode().is2xxSuccessful()) {
+	        String responseBody = responseEntity.getBody();
+	        System.out.println("Response body: " + responseBody);
+
+	        try {
+	            ObjectMapper objectMapper = new ObjectMapper();
+
+	            // JSON 문자열을 List<ReservationDTO>로 변환
+	            List<ReservationDTO> reservationDTOList = objectMapper.readValue(responseBody, new TypeReference<List<ReservationDTO>>() {
+	            });
+
+	            // 변환된 객체 리스트를 사용
+	            for (ReservationDTO reservationDTO : reservationDTOList) {
+	                System.out.println("rn: " + reservationDTO.getRoom_num() + ", member: " + reservationDTO.getMember());
+	            }
+
+	            // 모델에 reservationDTO 리스트 추가
+	            model.addAttribute("reservations", reservationDTOList);
+
+	            return reservationDTOList; // 메서드의 반환 값 추가
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    } else {
+	        System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+	    }
+
+	    return null; // 예외 상황에 빈 리스트 반환 또는 다른 적절한 반환 값
+	}
+
 //
 //
 //	public void cancel(ReservationDTO dto) {
@@ -235,7 +274,7 @@ public class MemberService {
 		// String userId = id; // (String)session.getAttribute("id");
 
 		// 서버에게 ID를 전송하는 URL
-		String apiUrl = "http://www.bowfun.link/requestMyBook";
+		String apiUrl = "http://www.bowfun.link/book/requestMyBook";
 
 		// POST 요청을 위한 헤더 및 본문 설정 (어떤 데이터 형식으로 보낼지 결정하는 부분) / 손잡이(재료)
 		HttpHeaders headers = new HttpHeaders();
@@ -288,7 +327,7 @@ public class MemberService {
 		RestTemplate restTemplate = new RestTemplate();
 
 		// 서버에게 ID를 전송하는 URL
-		String apiUrl = "/requestDateExtend";
+		String apiUrl = "http://www.bowfun.link/book/requestDateExtend";
 
 		// POST 요청을 위한 헤더 및 본문 설정 (어떤 데이터 형식으로 보낼지 결정하는 부분) / 손잡이(재료)
 		HttpHeaders headers = new HttpHeaders();
@@ -321,7 +360,7 @@ public class MemberService {
 		RestTemplate restTemplate = new RestTemplate();
 
 		// 서버에게 ID를 전송하는 URL
-		String apiUrl = "/requestreturnProc2";
+		String apiUrl = "http://www.bowfun.link/book/requestreturnProc2";
 
 		// POST 요청을 위한 헤더 및 본문 설정 (어떤 데이터 형식으로 보낼지 결정하는 부분) / 손잡이(재료)
 		HttpHeaders headers = new HttpHeaders();

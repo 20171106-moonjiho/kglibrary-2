@@ -44,10 +44,10 @@ public class HomeController {
 		return "default/footer";
 	}
 	
-	@RequestMapping("bookForm")
-	public String bookForm(String search,Model model,
-			@RequestParam(value="currentPage", required = false)String cp, String select) {
-		String path = main_Service.search(cp, model, search, select);
-		return path;
-	}
+//	@RequestMapping("bookForm")
+//	public String bookForm(String search,Model model,
+//			@RequestParam(value="currentPage", required = false)String cp, String select) {
+//		String path = main_Service.search(cp, model, search, select);
+//		return path;
+//	}
 }
