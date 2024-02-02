@@ -36,7 +36,7 @@
 				<li><a href="guide_room"><i class="link01 hvr-bob"></i><span>이용안내</span></a></li>
 				<li><a href="cultureboard"><i class="link02 hvr-bob"></i><span>문화행사<br>신청</span></a></li>
 				<li><a href="book/bookForm"><i class="link03 hvr-bob"></i><span>도서자료</span></a></li>
-				<li><a href="reservation"><i class="link04 hvr-bob"></i><span>회의실<br>예약현황</span></a></li>
+				<li><a href="reservation/reservation"><i class="link04 hvr-bob"></i><span>회의실<br>예약현황</span></a></li>
 				<li><a href="book/donateguide"><i class="link06 hvr-bob"></i><span>기증신청 <br>게시판</span></a></li>
 				<li><a href="dataStatus"><i class="link05 hvr-bob"></i><span>자료 현황</span></a></li>
 			</ul>

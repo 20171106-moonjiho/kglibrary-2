@@ -114,7 +114,7 @@
 						</div>
 					</li>
 					
-					<li><a href="reservation">회의실</a>
+					<li><a href="reservation/reservation">회의실</a>
 						<div class="two_depth">
 								<p class="bmenu_tit">자료검색</p>
 								<ul>	
