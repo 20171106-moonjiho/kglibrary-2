@@ -56,7 +56,7 @@ public class Introduction_Service {
 	            );
 
 		 	  List<Map<String, Object>> dataStatus = responseEntity.getBody();
-
+		 	 System.out.println("dataStatus 요청 보냄");
 			 	 return dataStatus;
 	            
 	        } catch (HttpClientErrorException.NotFound notFoundException) {

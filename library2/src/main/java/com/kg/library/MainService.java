@@ -29,7 +29,7 @@ public class MainService {
 					});
 
 			ArrayList<BookDTO> hitbooks = responseEntity.getBody();
-
+			System.out.println("hit_book 요청 보냄");
 			if (hitbooks != null) {
 				for (BookDTO b : hitbooks) {
 					if (b.getImage() == null || b.getImage().trim().isEmpty()) {
@@ -61,7 +61,7 @@ public class MainService {
 					});
 
 			ArrayList<BookDTO> newBooks = responseEntity.getBody();
-
+			System.out.println("newBooks 요청 보냄");
 			if (newBooks != null) {
 				for (BookDTO b : newBooks) {
 					System.out.print("\u001B[31m");
