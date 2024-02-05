@@ -194,20 +194,17 @@ public class MemberController {
         if (sessionId == null)
             return "redirect:login";
 
-	    System.out.println("my1");
-
         ResponseEntity<List<ReservationDTO>> responseEntity = service.myReservation(sessionId,model);
 
-//        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-//            List<ReservationDTO> reservationDTOList = responseEntity.getBody();
-//            model.addAttribute("reservations", reservationDTOList);
-//            return "member/myReservation";
-//        } else {
-//            System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
-//            // 에러 페이지로 리다이렉트 또는 적절한 에러 처리 로직 추가
-//            return "error";
-//        }
-        return "member/myReservation";
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            List<ReservationDTO> reservationDTOList = responseEntity.getBody();
+            model.addAttribute("reservations", reservationDTOList);
+            return "member/myReservation";
+        } else {
+            System.out.println("Request failed. Status code: " + responseEntity.getStatusCode());
+            // 에러 페이지로 리다이렉트 또는 적절한 에러 처리 로직 추가
+            return "error";
+        }
     }
     
     @RequestMapping("cancel")
