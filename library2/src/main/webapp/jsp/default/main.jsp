@@ -136,7 +136,7 @@
 							 <c:forEach var="hitbook" items="${hitbooks}" varStatus="loop" >
 							 	 <li>
 							 	 <a href="book/bookContent?no=${hitbook.no }">
-							 	 <img src="${imageUrls[loop.index]}" alt="">
+							 	 <img src="${hitbook.image}" alt="">
 								  <div class="overrap">
 								  	<span class="btit">${hitbook.title_info}</span>
 									<span class="name">${hitbook.author_info}</span>
@@ -158,7 +158,7 @@
 										<br>
 									</c:when>
 									<c:otherwise>
-										<img src="${newbook.image }">
+										<img src="${imageUrls[loop.index]}" alt="">
 										<br>
 									</c:otherwise>
 								</c:choose>

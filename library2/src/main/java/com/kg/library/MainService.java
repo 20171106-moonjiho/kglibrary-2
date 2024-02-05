@@ -68,8 +68,9 @@ public class MainService {
 						continue;
 					}
 					System.out.println("받아온 hitbook : "+ b.getImage());
-					String imageUrl = getS3ObjectUri(b.getImage());
-					imageUrls.add(imageUrl);
+					b.setImage(getS3ObjectUri(b.getImage()));
+//					String imageUrl = getS3ObjectUri(b.getImage());
+//					imageUrls.add(imageUrl);
 				}
 			}
 			// 모델에 데이터 추가
