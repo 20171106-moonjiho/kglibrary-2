@@ -67,6 +67,7 @@ public class MainService {
 						b.setImage("20240109150111-40641325628.20230718121618.jpg");
 						continue;
 					}
+					System.out.println("받아온 hitbook : "+ b.getImage());
 					String imageUrl = getS3ObjectUri(b.getImage());
 					imageUrls.add(imageUrl);
 				}
