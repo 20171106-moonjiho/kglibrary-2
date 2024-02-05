@@ -194,9 +194,7 @@ public class MemberController {
         if (sessionId == null)
             return "redirect:login";
 
-	    System.out.println("my1");
-
-        ResponseEntity<List<ReservationDTO>> responseEntity = service.myReservation(sessionId);
+        ResponseEntity<List<ReservationDTO>> responseEntity = service.myReservation(sessionId,model);
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             List<ReservationDTO> reservationDTOList = responseEntity.getBody();
