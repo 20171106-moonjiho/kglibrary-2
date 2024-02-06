@@ -20,7 +20,7 @@ function bookCheck() {
 function deleteCheck(no){
 	result = confirm('진짜로 삭제하겠습니까?');
 	if(result == true){
-		location.href="bookDeleteProc?no="+no
+		location.href="bookDeleteProc?no="+no 
 	}
 }
 function rentCheck(userId, no){
