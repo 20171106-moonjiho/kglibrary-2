@@ -26,7 +26,7 @@ function deleteCheck(no){
 function rentCheck(userId, no){
     if (userId == "null" || userId.trim() == "") {
         alert("로그인이 필요합니다.");
-        location.href = "login";
+        location.href = "../login";
     }
     else{
 		result = confirm('대여 하시겠습니까?');
@@ -39,7 +39,7 @@ function rentCheck(userId, no){
 function returnCheck(userId, no){
 	if (userId == "null" || userId.trim() == "") {
 		alert("로그인이 필요합니다.");
-		location.href = "login";
+		location.href = "../login";
 	} else {
 		result = confirm('반납 하시겠습니까?');
 		if (result == true) {
