@@ -189,13 +189,13 @@ public class MemberService {
 		return "아이디 또는 비밀번호를 확인 후 입력하세요";
 	}
 	
-	public ResponseEntity<List<ReservationDTO>> myReservation(String sessionId) {
+	public ResponseEntity<List<ReservationDTO>> myReservation(String sessionId,Model model) {
 	    // RestTemplate 생성
 	    RestTemplate restTemplate = new RestTemplate();
 	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "https://www.bowfun.link/requestMyReservation";
+	    String apiUrl = "https://www.bowfun.link/reservation/requestMyReservation";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
@@ -220,7 +220,8 @@ public class MemberService {
 	            // JSON 문자열을 List<ReservationDTO>로 변환
 	            List<ReservationDTO> reservationDTOList = objectMapper.readValue(responseBody, new TypeReference<List<ReservationDTO>>() {
 	            });
-
+	            
+				model.addAttribute("reservations", reservationDTOList);
 	            return ResponseEntity.ok(reservationDTOList);
 
 	        } catch (IOException e) {
@@ -238,7 +239,7 @@ public class MemberService {
 	    RestTemplate restTemplate = new RestTemplate();
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "https://www.bowfun.link/requestCancel";
+	    String apiUrl = "https://www.bowfun.link/reservation/requestCancel";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();
@@ -276,7 +277,7 @@ public class MemberService {
 	    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
 
 	    // 서버에게 ID를 전송하는 URL
-	    String apiUrl = "https://www.bowfun.link/requestPreReservation";
+	    String apiUrl = "https://www.bowfun.link/reservation/requestPreReservation";
 
 	    // POST 요청을 위한 헤더 및 본문 설정
 	    HttpHeaders headers = new HttpHeaders();

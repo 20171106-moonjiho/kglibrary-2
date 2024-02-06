@@ -67,8 +67,10 @@ public class MainService {
 						b.setImage("20240109150111-40641325628.20230718121618.jpg");
 						continue;
 					}
-					String imageUrl = getS3ObjectUri(b.getImage());
-					imageUrls.add(imageUrl);
+					System.out.println("받아온 hitbook : "+ b.getImage());
+					b.setImage(getS3ObjectUri(b.getImage()));
+//					String imageUrl = getS3ObjectUri(b.getImage());
+//					imageUrls.add(imageUrl);
 				}
 			}
 			// 모델에 데이터 추가
